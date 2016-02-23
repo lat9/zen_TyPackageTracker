@@ -1,13 +1,16 @@
 <?php
 /**
  * @package admin
- * @copyright Copyright 2003-2011 Zen Cart Development Team
+ * @copyright Copyright 2003-2014 Zen Cart Development Team
  * @copyright Portions Copyright 2003 osCommerce
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
- * @version $Id: orders.php 19530 2011-09-19 13:52:37Z ajeh $
+ * @version GIT: $Id: Author: DrByte  Jun 30 2014 Modified in v1.5.4 $
  */
 
   require('includes/application_top.php');
+
+  // unset variable which is sometimes tainted by bad plugins like magneticOne tools
+  if (isset($module)) unset($module);
 
   require(DIR_WS_CLASSES . 'currencies.php');
   $currencies = new currencies();
@@ -44,7 +47,7 @@
   }
   if ($oID) {
     $orders = $db->Execute("select orders_id from " . TABLE_ORDERS . "
-                            where orders_id = '" . (int)$oID . "'");
+                              where orders_id = '" . (int)$oID . "'");
     $order_exists = true;
     if ($orders->RecordCount() <= 0) {
       $order_exists = false;
@@ -62,6 +65,7 @@
           $check_status = $db->Execute("select customers_name, customers_email_address, orders_status,
                                       date_purchased from " . TABLE_ORDERS . "
                                       where orders_id = '" . $_GET['oID'] . "'");
+
           // check for existing product attribute download days and max
           $chk_products_download_query = "SELECT orders_products_id, orders_products_filename, products_prid from " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " WHERE orders_products_download_id='" . $_GET['download_reset_on'] . "'";
           $chk_products_download = $db->Execute($chk_products_download_query);
@@ -69,7 +73,7 @@
           $chk_products_download_time_query = "SELECT pa.products_attributes_id, pa.products_id, pad.products_attributes_filename, pad.products_attributes_maxdays, pad.products_attributes_maxcount
           from " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
           WHERE pa.products_attributes_id = pad.products_attributes_id
-          and pad.products_attributes_filename = '" . $chk_products_download->fields['orders_products_filename'] . "'
+          and pad.products_attributes_filename = '" . $db->prepare_input($chk_products_download->fields['orders_products_filename']) . "'
           and pa.products_id = '" . (int)$chk_products_download->fields['products_prid'] . "'";
 
           $chk_products_download_time = $db->Execute($chk_products_download_time_query);
@@ -81,6 +85,7 @@
             $zc_max_days = ($chk_products_download_time->fields['products_attributes_maxdays'] == 0 ? 0 : zen_date_diff($check_status->fields['date_purchased'], date('Y-m-d H:i:s', time())) + $chk_products_download_time->fields['products_attributes_maxdays']);
             $update_downloads_query = "update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_maxdays='" . $zc_max_days . "', download_count='" . $chk_products_download_time->fields['products_attributes_maxcount'] . "' where orders_id='" . $_GET['oID'] . "' and orders_products_download_id='" . $_GET['download_reset_on'] . "'";
           }
+
           $db->Execute($update_downloads_query);
           unset($_GET['download_reset_on']);
 
@@ -95,6 +100,7 @@
           $update_downloads_query = "update " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " set download_count='0' where orders_id='" . $_GET['oID'] . "' and orders_products_download_id='" . $_GET['download_reset_off'] . "'";
           $db->Execute($update_downloads_query);
           unset($_GET['download_reset_off']);
+
           $messageStack->add_session(SUCCESS_ORDER_UPDATED_DOWNLOAD_OFF, 'success');
           zen_redirect(zen_href_link(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=edit', 'NONSSL'));
         }
@@ -110,42 +116,39 @@
         $comments = zen_db_prepare_input($_POST['comments']);
         $status = (int)zen_db_prepare_input($_POST['status']);
         if ($status < 1) break;
-// BEGIN TY TRACKER 1 - DEFINE VALUES ----------------------------------------------
-        $track_id1 = str_replace(" ", "", zen_db_prepare_input($_POST['track_id1']));
-        $track_id2 = str_replace(" ", "", zen_db_prepare_input($_POST['track_id2']));
-        $track_id3 = str_replace(" ", "", zen_db_prepare_input($_POST['track_id3']));
-        $track_id4 = str_replace(" ", "", zen_db_prepare_input($_POST['track_id4']));
-        $track_id5 = str_replace(" ", "", zen_db_prepare_input($_POST['track_id5']));
-// END TY TRACKER 1 - DEFINE VALUES ------------------------------------------------------------------
+// BEGIN TY TRACKER 1 - DEFINE TRACKING VALUES, INCLUDE DATABASE FIELDS IN STATUS QUERY, & E-MAIL TRACKING INFORMATION  ----------------------------------------------
+		$check_extra_fields = '';
+		$track_id = array();
+			$track_id = zen_db_prepare_input($_POST['track_id']);
 
-        $order_updated = false;
-// BEGIN TY TRACKER 2 - INCLUDE DATABASE FIELDS IN STATUS QUERY ----------------------------------------------
-        $check_status = $db->Execute("SELECT customers_name, customers_email_address, orders_status, payment_module_code, shipping_module_code,
-				      date_purchased from " . TABLE_ORDERS . "
-                                      where orders_id = '" . (int)$oID . "'");
-// END TY TRACKER 2 - INCLUDE DATABASE FIELDS IN STATUS QUERY ------------------------------------------------------------------
+		$check_status = $db->Execute(
+			'select customers_name, customers_email_address, orders_status,' . $check_extra_fields .
+			'date_purchased FROM `' . TABLE_ORDERS . '` WHERE orders_id = \'' . (int)$oID . '\''
+		);
+		unset($check_extra_fields);
 
-        if ( ($check_status->fields['orders_status'] != $status) || zen_not_null($comments)) {
-          $db->Execute("update " . TABLE_ORDERS . "
-                        set orders_status = '" . zen_db_input($status) . "', last_modified = now()
-                        where orders_id = '" . (int)$oID . "'");
+		if(($check_status->fields['orders_status'] != $status) || zen_not_null($track_id)) {
 
           $customer_notified = '0';
           if (isset($_POST['notify']) && ($_POST['notify'] == '1')) {
 
             $notify_comments = '';
-// BEGIN TY TRACKER 3 - E-MAIL TRACKING INFORMATION  ----------------------------------
-            if (isset($_POST['notify_comments']) && ($_POST['notify_comments'] == 'on')) {
-              if (zen_not_null($comments)) {
-                $notify_comments = EMAIL_TEXT_COMMENTS_UPDATE . $comments . "\n\n";
-              }
-              if (zen_not_null($track_id1)) { $notify_comments .= "\n\nYour " . CARRIER_NAME_1 . " Tracking ID is " . $track_id1 . " \n<br /><a href=" . CARRIER_LINK_1 . $track_id1 . ">Click here</a> to track your package. \n<br />If the above link does not work, copy the following URL address and paste it into your Web browser. \n<br />" . CARRIER_LINK_1 . $track_id1 . "\n\n<br /><br />It may take up to 24 hours for the tracking information to appear on the website." . "\n<br />"; }
-              if (zen_not_null($track_id2)) { $notify_comments .= "\n\nYour " . CARRIER_NAME_2 . " Tracking ID is " . $track_id2 . " \n<br /><a href=" . CARRIER_LINK_2 . $track_id2 . ">Click here</a> to track your package. \n<br />If the above link does not work, copy the following URL address and paste it into your Web browser. \n<br />" . CARRIER_LINK_2 . $track_id2 . "\n\n<br /><br />It may take up to 24 hours for the tracking information to appear on the website." . "\n<br />"; }
-              if (zen_not_null($track_id3)) { $notify_comments .= "\n\nYour " . CARRIER_NAME_3 . " Tracking ID is " . $track_id3 . " \n<br /><a href=" . CARRIER_LINK_3 . $track_id3 . ">Click here</a> to track your package. \n<br />If the above link does not work, copy the following URL address and paste it into your Web browser. \n<br />" . CARRIER_LINK_3 . $track_id3 . "\n\n<br /><br />It may take up to 24 hours for the tracking information to appear on the website." . "\n<br />"; }
-              if (zen_not_null($track_id4)) { $notify_comments .= "\n\nYour " . CARRIER_NAME_4 . " Tracking ID is " . $track_id4 . " \n<br /><a href=" . CARRIER_LINK_4 . $track_id4 . ">Click here</a> to track your package. \n<br />If the above link does not work, copy the following URL address and paste it into your Web browser. \n<br />" . CARRIER_LINK_4 . $track_id4 . "\n\n<br /><br />It may take up to 24 hours for the tracking information to appear on the website." . "\n<br />"; }
-              if (zen_not_null($track_id5)) { $notify_comments .= "\n\nYour " . CARRIER_NAME_5 . " Tracking ID is " . $track_id5 . " \n<br /><a href=" . CARRIER_LINK_5 . $track_id5 . ">Click here</a> to track your package. \n<br />If the above link does not work, copy the following URL address and paste it into your Web browser. \n<br />" . CARRIER_LINK_5 . $track_id5 . "\n\n<br /><br />It may take up to 24 hours for the tracking information to appear on the website." . "\n<br />"; }
-// BEGIN TY TRACKER 3 - E-MAIL TRACKING INFORMATION --------------------------------------------------------------------
+				if (isset($_POST['notify_comments']) && ($_POST['notify_comments'] == 'on')) {
+					if (zen_not_null($comments)) {
+              $notify_comments = EMAIL_TEXT_COMMENTS_UPDATE . $comments . "\n\n";
             }
+					else if (zen_not_null($track_id)) {
+						$notify_comments = EMAIL_TEXT_COMMENTS_TRACKING_UPDATE . "\n\n";
+						$comment = EMAIL_TEXT_COMMENTS_TRACKING_UPDATE;
+					}
+					foreach($track_id as $id => $track) {
+						if(zen_not_null($track) && constant('CARRIER_STATUS_' . $id) == 'True') {
+							$notify_comments .= "Your " . constant('CARRIER_NAME_' . $id) . " Tracking ID is " . $track . " \n<br /><a href=" . constant('CARRIER_LINK_' . $id) . $track . ">Click here</a> to track your package. \n<br />If the above link does not work, copy the following URL address and paste it into your Web browser. \n<br />" . constant('CARRIER_LINK_' . $id) . $track . "\n\n<br /><br />It may take up to 24 hours for the tracking information to appear on the website." . "\n<br />";
+						}
+					}
+					unset($id); unset($track);
+				}
+// END TY TRACKER 1 - DEFINE TRACKING VALUES, INCLUDE DATABASE FIELDS IN STATUS QUERY, & E-MAIL TRACKING INFORMATION  ----------------------------------------------
             //send emails
             $message =
 //<!-- Begin Ty Package Tracker Modification (Minor formatting change) //-->
@@ -189,22 +192,29 @@
             $customer_notified = '-1';
           }
 
-// BEGIN TY TRACKER 4 - INCLUDE DATABASE FIELDS IN STATUS UPDATE ----------------------------------------------
-          $db->Execute("insert into " . TABLE_ORDERS_STATUS_HISTORY . "
-                      (orders_id, orders_status_id, date_added, customer_notified, track_id1, track_id2, track_id3, track_id4, track_id5, comments)
-                      values ('" . (int)$oID . "',
-                      '" . zen_db_input($status) . "',
-                      now(),
-                      '" . zen_db_input($customer_notified) . "',
-                      '" . zen_db_input($track_id1) . "',
-                      '" . zen_db_input($track_id2) . "',
-                      '" . zen_db_input($track_id3) . "',
-                      '" . zen_db_input($track_id4) . "',
-                      '" . zen_db_input($track_id5) . "',
-                      '" . zen_db_input($comments)  . "')");
+// BEGIN TY TRACKER 2 - INCLUDE DATABASE FIELDS IN STATUS UPDATE ----------------------------------------------
+			$sql_data_array = array(
+				'orders_id' => (int)$oID,
+				'orders_status_id' => zen_db_input($status),
+				'date_added' => 'now()',
+				'customer_notified' => zen_db_input($customer_notified),
+				'comments' => zen_db_input($comments),
+			);
+			foreach($track_id as $id => $track) {
+				$sql_data_array['track_id' . $id] = zen_db_input($track);
+			}
+			unset($id); unset($track);
+			zen_db_perform(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
+
+			$sql_data_array = array(
+				'orders_status' => zen_db_input($status),
+				'last_modified' => 'now()'
+			);
+			zen_db_perform(TABLE_ORDERS, $sql_data_array, 'update', 'orders_id = \'' . (int)$oID . '\'');
+			unset($sql_data_array);
           $order_updated = true;
         }
-// END TY TRACKER 4 - INCLUDE DATABASE FIELDS IN STATUS UPDATE ------------------------------------------------------------------
+// END TY TRACKER 2 - INCLUDE DATABASE FIELDS IN STATUS UPDATE ------------------------------------------------------------------
         // trigger any appropriate updates which should be sent back to the payment gateway:
         $order = new order((int)$oID);
         if ($order->info['payment_module_code']) {
@@ -219,7 +229,7 @@
         }
 
         if ($order_updated == true) {
-         if ($status == DOWNLOADS_ORDERS_STATUS_UPDATED_VALUE) {
+          if ($status == DOWNLOADS_ORDERS_STATUS_UPDATED_VALUE) {
 
             // adjust download_maxdays based on current date
             $chk_downloads_query = "SELECT opd.*, op.products_id from " . TABLE_ORDERS_PRODUCTS_DOWNLOAD . " opd, " . TABLE_ORDERS_PRODUCTS . " op
@@ -231,7 +241,7 @@
               $chk_products_download_time_query = "SELECT pa.products_attributes_id, pa.products_id, pad.products_attributes_filename, pad.products_attributes_maxdays, pad.products_attributes_maxcount
                                                     from " . TABLE_PRODUCTS_ATTRIBUTES . " pa, " . TABLE_PRODUCTS_ATTRIBUTES_DOWNLOAD . " pad
                                                     WHERE pa.products_attributes_id = pad.products_attributes_id
-                                                    and pad.products_attributes_filename = '" . $chk_downloads->fields['orders_products_filename'] . "'
+                                                    and pad.products_attributes_filename = '" . $db->prepare_input($chk_downloads->fields['orders_products_filename']) . "'
                                                     and pa.products_id = '" . $chk_downloads->fields['products_id'] . "'";
 
               $chk_products_download_time = $db->Execute($chk_products_download_time_query);
@@ -250,6 +260,7 @@
             }
           }
           $messageStack->add_session(SUCCESS_ORDER_UPDATED, 'success');
+          zen_record_admin_activity('Order ' . $oID . ' updated.', 'info');
         } else {
           $messageStack->add_session(WARNING_ORDER_NOT_UPDATED, 'warning');
         }
@@ -292,6 +303,7 @@
             }
           }
         }
+        zen_record_admin_activity('Order ' . $oID . ' refund processed. See order comments for details.', 'info');
         zen_redirect(zen_href_link(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=edit', 'NONSSL'));
         break;
       case 'doAuth':
@@ -334,22 +346,23 @@
             }
           }
         }
+        zen_record_admin_activity('Order ' . $oID . ' void processed. See order comments for details.', 'info');
         zen_redirect(zen_href_link(FILENAME_ORDERS, zen_get_all_get_params(array('action')) . 'action=edit', 'NONSSL'));
         break;
     }
   }
 ?>
-<!doctype html public "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!doctype html>
 <html <?php echo HTML_PARAMS; ?>>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=<?php echo CHARSET; ?>">
 <title><?php echo TITLE; ?></title>
 <link rel="stylesheet" type="text/css" href="includes/stylesheet.css">
-<link rel="stylesheet" type="text/css" href="includes/typt_stylesheet.css">
 <link rel="stylesheet" type="text/css" media="print" href="includes/stylesheet_print.css">
+<link rel="stylesheet" type="text/css" href="includes/typt_stylesheet.css">
 <link rel="stylesheet" type="text/css" href="includes/cssjsmenuhover.css" media="all" id="hoverJS">
-<script language="javascript" src="includes/menu.js"></script>
-<script language="javascript" src="includes/general.js"></script>
+<script type="text/javascript" src="includes/menu.js"></script>
+<script type="text/javascript" src="includes/general.js"></script>
 <script type="text/javascript">
   <!--
   function init()
@@ -363,11 +376,11 @@
   }
   // -->
 </script>
-<script language="javascript" type="text/javascript"><!--
+<script type="text/javascript">
 function couponpopupWindow(url) {
   window.open(url,'popupWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=450,height=280,screenX=150,screenY=150,top=150,left=150')
 }
-//--></script>
+</script>
 </head>
 <body onLoad="init()">
 <!-- header //-->
@@ -378,19 +391,10 @@ function couponpopupWindow(url) {
 </div>
 <!-- header_eof //-->
 
-<!-- body //-->
-<table border="0" width="100%" cellspacing="2" cellpadding="2">
-<!-- body_text //-->
-
 <?php if ($action == '') { ?>
 <!-- search -->
-  <tr>
-    <td width="100%" valign="top"><table border="0" width="100%" cellspacing="0" cellpadding="2">
-      <tr>
-        <td><table border="0" width="100%" cellspacing="0" cellpadding="0">
-         <tr><?php echo zen_draw_form('search', FILENAME_ORDERS, '', 'get', '', true); ?>
-            <td width="65%" class="pageHeading" align="right"><?php echo zen_draw_separator('pixel_trans.gif', 1, HEADING_IMAGE_HEIGHT); ?></td>
-            <td colspan="2" class="smallText" align="right">
+<div id="searchOrders">
+<?php echo zen_draw_form('search', FILENAME_ORDERS, '', 'get', '', true); ?>
 <?php
 // show reset search
   if ((isset($_GET['search']) && zen_not_null($_GET['search'])) or $_GET['cID'] !='') {
@@ -404,15 +408,13 @@ function couponpopupWindow(url) {
     echo '<br/ >' . TEXT_INFO_SEARCH_DETAIL_FILTER . $keywords;
   }
 ?>
-            </td>
-          </form>
+</form>
+</div>
 
-
-         <?php echo zen_draw_form('search_orders_products', FILENAME_ORDERS, '', 'get', '', true); ?>
-            <td class="pageHeading" align="right"><?php echo zen_draw_separator('pixel_trans.gif', 1, HEADING_IMAGE_HEIGHT); ?></td>
-            <td colspan="2" class="smallText" align="right">
+<div id="searchOrdersProducts">
+<?php echo zen_draw_form('search_orders_products', FILENAME_ORDERS, '', 'get', '', true); ?>
 <?php
-// show reset search orders_products
+// show reset search orders products
   if ((isset($_GET['search_orders_products']) && zen_not_null($_GET['search_orders_products'])) or $_GET['cID'] !='') {
     echo '<a href="' . zen_href_link(FILENAME_ORDERS, '', 'NONSSL') . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a><br />';
   }
@@ -424,13 +426,35 @@ function couponpopupWindow(url) {
     echo '<br/ >' . TEXT_INFO_SEARCH_DETAIL_FILTER_ORDERS_PRODUCTS . zen_db_prepare_input($keywords_orders_products);
   }
 ?>
-            </td>
-          </form>
+</form>
+</div>
 
-        </table></td>
-      </tr>
+<div id="searchStatus">
+<?php echo zen_draw_form('status', FILENAME_ORDERS, '', 'get', '', true); ?>
+<?php
+// show reset search status
+  if ((isset($_GET['status']) && zen_not_null($_GET['status'])) or $_GET['cID'] !='') {
+    echo '<a href="' . zen_href_link(FILENAME_ORDERS, '', 'NONSSL') . '">' . zen_image_button('button_reset.gif', IMAGE_RESET) . '</a><br />';
+  }
+?>
+<?php
+    echo HEADING_TITLE_STATUS . ' ' . zen_draw_pull_down_menu('status', array_merge(array(array('id' => '', 'text' => TEXT_ALL_ORDERS)), $orders_statuses), $_GET['status'], 'onChange="this.form.submit();"');
+    echo zen_hide_session_id();
+?>
+</form>
+</div>
+
+<div id="searchOrderID">
+<?php echo zen_draw_form('ordersID', FILENAME_ORDERS, '', 'get', '', true); ?>
+<?php echo HEADING_TITLE_SEARCH . ' ' . zen_draw_input_field('oID', '', 'size="12"') . zen_draw_hidden_field('action', 'edit') . zen_hide_session_id(); ?>
+</form>
+</div>
 <!-- search -->
 <?php } ?>
+
+<!-- body //-->
+<table border="0" width="100%" cellspacing="2" cellpadding="2">
+<!-- body_text //-->
 
 
 <?php
@@ -520,7 +544,13 @@ function couponpopupWindow(url) {
               </tr>
               <tr>
                 <td class="main"><strong><?php echo TEXT_INFO_IP_ADDRESS; ?></strong></td>
-                <td class="main"><?php echo $order->info['ip_address']; ?></td>
+<!-- BEGIN - Add Super Orders Order IP Functionality -->
+                <?php if ($order->info['ip_address'] != '') { ?>
+                <td class="main"><?php echo $order->info['ip_address'] . '&nbsp;[<a target="_blank" href="http://www.dnsstuff.com/tools/whois.ch?ip=' . $order->info['ip_address'] . '">' . TEXT_WHOIS_LOOKUP . '</a>]'; ?></td>
+                <?php } else { ?>
+                <td class="main"><?php echo TEXT_NONE; ?></td>
+                <?php } ?>
+<!-- END - Add Super Orders Order IP Functionality -->
               </tr>
             </table></td>
             <td valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="2">
@@ -570,12 +600,12 @@ function couponpopupWindow(url) {
           </tr>
           <tr>
             <td class="main"><?php echo ENTRY_CREDIT_CARD_NUMBER; ?></td>
-            <td class="main"><?php echo $order->info['cc_number'] . (zen_not_null($order->info['cc_number']) && !strstr($order->info['cc_number'],'X') && !strstr($order->info['cc_number'],'********') ? '&nbsp;&nbsp;<a href="' . zen_href_link(FILENAME_ORDERS, '&action=mask_cc&oID=' . $oID, 'NONSSL') . '" class="noprint">' . TEXT_MASK_CC_NUMBER . '</a>' : ''); ?><td>
+            <td class="main"><?php echo $order->info['cc_number'] . (zen_not_null($order->info['cc_number']) && !strstr($order->info['cc_number'],'X') && !strstr($order->info['cc_number'],'********') ? '&nbsp;&nbsp;<a href="' . zen_href_link(FILENAME_ORDERS, '&action=mask_cc&oID=' . $oID, 'NONSSL') . '" class="noprint">' . TEXT_MASK_CC_NUMBER . '</a>' : ''); ?></td> /*Fix stock Zen Cart HTML (missing closing tag)*/
           </tr>
 <?php if (zen_not_null($order->info['cc_cvv'])) { ?>
           <tr>
             <td class="main"><?php echo ENTRY_CREDIT_CARD_CVV; ?></td>
-            <td class="main"><?php echo $order->info['cc_cvv'] . (zen_not_null($order->info['cc_cvv']) && !strstr($order->info['cc_cvv'],TEXT_DELETE_CVV_REPLACEMENT) ? '&nbsp;&nbsp;<a href="' . zen_href_link(FILENAME_ORDERS, '&action=delete_cvv&oID=' . $oID, 'NONSSL') . '" class="noprint">' . TEXT_DELETE_CVV_FROM_DATABASE . '</a>' : ''); ?><td>
+            <td class="main"><?php echo $order->info['cc_cvv'] . (zen_not_null($order->info['cc_cvv']) && !strstr($order->info['cc_cvv'],TEXT_DELETE_CVV_REPLACEMENT) ? '&nbsp;&nbsp;<a href="' . zen_href_link(FILENAME_ORDERS, '&action=delete_cvv&oID=' . $oID, 'NONSSL') . '" class="noprint">' . TEXT_DELETE_CVV_FROM_DATABASE . '</a>' : ''); ?></td> /*Fix stock Zen Cart HTML (missing closing tag)*/
           </tr>
 <?php } ?>
           <tr>
@@ -590,7 +620,7 @@ function couponpopupWindow(url) {
 <!-- End Customer & Payment Information //-->
 <!-- Begin PayPal or CreditCard Notification Panel //-->
 <?php
-      if (method_exists($module, 'admin_notification')) {
+      if (is_object($module) && method_exists($module, 'admin_notification')) {
 ?>
       <tr>
         <td><?php echo zen_draw_separator('pixel_trans.gif', '1', '10'); ?></td>
@@ -698,20 +728,20 @@ function couponpopupWindow(url) {
             <td class="dataTableHeadingContent smallText" align="center" valign="top" width="12%"><strong><?php echo TABLE_HEADING_CUSTOMER_NOTIFIED; ?></strong></td>
             <td class="dataTableHeadingContent smallText" valign="top" width="10%"><strong><?php echo TABLE_HEADING_STATUS; ?></strong></td>
 <!-- End Ty Package Tracker Modification (Minor formatting changes) //-->
-<!-- BEGIN TY TRACKER 7 - DISPLAY TRACKING ID IN COMMENTS TABLE ------------------------------->
+<!-- BEGIN TY TRACKER 3 - DISPLAY TRACKING ID IN COMMENTS TABLE ------------------------------->
 	    <td class="dataTableHeadingContent smallText" valign="top" width="23%"><strong><?php echo TABLE_HEADING_TRACKING_ID; ?></strong></td>
-<!-- END TY TRACKER 7 - DISPLAY TRACKING ID IN COMMENTS TABLE ------------------------------------------------------------>
+<!-- END TY TRACKER 3 - DISPLAY TRACKING ID IN COMMENTS TABLE ------------------------------------------------------------>
 <!-- Begin Ty Package Tracker Modification (Minor formatting changes) //-->
             <td class="dataTableHeadingContent smallText" valign="top" width="40%"><strong><?php echo TABLE_HEADING_COMMENTS; ?></strong></td>
 <!-- End Ty Package Tracker Modification (Minor formatting changes) //-->
           </tr>
-<?php 
-// BEGIN TY TRACKER 8 - INCLUDE DATABASE FIELDS IN STATUS TABLE ------------------------------
+<?php
+// BEGIN TY TRACKER 4 - INCLUDE DATABASE FIELDS IN STATUS TABLE ------------------------------
     $orders_history = $db->Execute("select orders_status_id, date_added, customer_notified, track_id1, track_id2, track_id3, track_id4, track_id5, comments
                                     from " . TABLE_ORDERS_STATUS_HISTORY . "
                                     where orders_id = '" . zen_db_input($oID) . "'
                                     order by date_added");
-// END TY TRACKER 8 - INCLUDE DATABASE FIELDS IN STATUS TABLE -----------------------------------------------------------
+// END TY TRACKER 4 - INCLUDE DATABASE FIELDS IN STATUS TABLE -----------------------------------------------------------
 
     if ($orders_history->RecordCount() > 0) {
       while (!$orders_history->EOF) {
@@ -730,7 +760,7 @@ function couponpopupWindow(url) {
 //<!-- Begin Ty Package Tracker Modification (Minor formatting changes) //-->
         echo '            <td class="smallText" valign="top">' . $orders_status_array[$orders_history->fields['orders_status_id']] . '</td>' . "\n";
 //<!-- End Ty Package Tracker Modification (Minor formatting changes) //-->
-// BEGIN TY TRACKER 9 - DEFINE TRACKING INFORMATION ----------------
+// BEGIN TY TRACKER 5 - DEFINE TRACKING INFORMATION ----------------
         $display_track_id = '&nbsp;';
 	$display_track_id .= (empty($orders_history->fields['track_id1']) ? '' : CARRIER_NAME_1 . ": <a href=" . CARRIER_LINK_1 . nl2br(zen_output_string_protected($orders_history->fields['track_id1'])) . ' target="_blank">' . nl2br(zen_output_string_protected($orders_history->fields['track_id1'])) . "</a>&nbsp;" );
 	$display_track_id .= (empty($orders_history->fields['track_id2']) ? '' : CARRIER_NAME_2 . ": <a href=" . CARRIER_LINK_2 . nl2br(zen_output_string_protected($orders_history->fields['track_id2'])) . ' target="_blank">' . nl2br(zen_output_string_protected($orders_history->fields['track_id2'])) . "</a>&nbsp;" );
@@ -738,7 +768,7 @@ function couponpopupWindow(url) {
 	$display_track_id .= (empty($orders_history->fields['track_id4']) ? '' : CARRIER_NAME_4 . ": <a href=" . CARRIER_LINK_4 . nl2br(zen_output_string_protected($orders_history->fields['track_id4'])) . ' target="_blank">' . nl2br(zen_output_string_protected($orders_history->fields['track_id4'])) . "</a>&nbsp;" );
 	$display_track_id .= (empty($orders_history->fields['track_id5']) ? '' : CARRIER_NAME_5 . ": <a href=" . CARRIER_LINK_5 . nl2br(zen_output_string_protected($orders_history->fields['track_id5'])) . ' target="_blank">' . nl2br(zen_output_string_protected($orders_history->fields['track_id5'])) . "</a>&nbsp;" );
         echo '            <td class="smallText" align="left" valign="top">' . $display_track_id . '</td>' . "\n";
-// BEGIN TY TRACKER 9 - DEFINE TRACKING INFORMATION -------------------------------------------------------------------
+// END TY TRACKER 5 - DEFINE TRACKING INFORMATION -------------------------------------------------------------------
 //<!-- Begin Ty Package Tracker Modification (Minor formatting changes) //-->
         echo '            <td class="smallText" valign="top">' . nl2br(zen_db_output($orders_history->fields['comments'])) . '&nbsp;</td>' . "\n" .
 //<!-- End Ty Package Tracker Modification (Minor formatting changes) //-->
@@ -764,7 +794,7 @@ function couponpopupWindow(url) {
       </tr>
       <tr>
         <td>
-<!-- BEGIN TY TRACKER 10 - ENTER TRACKING INFORMATION -->
+<!-- BEGIN TY TRACKER 6 - ENTER TRACKING INFORMATION -->
 	<table border="0" cellpadding="3" cellspacing="0">          
 		<tr>
 			<td class="main"><strong><?php echo zen_image(DIR_WS_IMAGES . 'icon_track_add.png', ENTRY_ADD_TRACK) . '&nbsp;' . ENTRY_ADD_TRACK; ?></strong></td>
@@ -776,36 +806,17 @@ function couponpopupWindow(url) {
 						<td class="dataTableHeadingContent smallText"><strong><?php echo TABLE_HEADING_CARRIER_NAME; ?></strong></td>
 						<td class="dataTableHeadingContent smallText"><strong><?php echo TABLE_HEADING_TRACKING_ID; ?></strong></td>
 					</tr>
-					<?php if (CARRIER_STATUS_1 == 'True') { ?>
-					<tr>
-						<td><?php echo CARRIER_NAME_1; ?></td><td valign="top"><?php echo zen_draw_input_field('track_id1', '', 'size="50"'); ?></td>
-					</tr>
-					<?php } ?>
-					<?php if (CARRIER_STATUS_2 == 'True') { ?>
-					<tr>
-						<td><?php echo CARRIER_NAME_2; ?></td><td valign="top"><?php echo zen_draw_input_field('track_id2', '', 'size="50"'); ?></td>
-					</tr>
-					<?php } ?>
-					<?php if (CARRIER_STATUS_3 == 'True') { ?>
-					<tr>
-						<td><?php echo CARRIER_NAME_3; ?></td><td valign="top"><?php echo zen_draw_input_field('track_id3', '', 'size="50"'); ?></td>
-					</tr>
-					<?php } ?>
-					<?php if (CARRIER_STATUS_4 == 'True') { ?>
-					<tr>
-						<td><?php echo CARRIER_NAME_4; ?></td><td valign="top"><?php echo zen_draw_input_field('track_id4', '', 'size="50"'); ?></td>
-					</tr>
-					<?php } ?>
-					<?php if (CARRIER_STATUS_5 == 'True') { ?>
-					<tr>
-						<td><?php echo CARRIER_NAME_5; ?></td><td valign="top"><?php echo zen_draw_input_field('track_id5', '', 'size="50"'); ?></td>
-					</tr>
-					<?php } ?>
+							<?php for($i=1;$i<=5;$i++) {
+								if(constant('CARRIER_STATUS_' . $i) == 'True') { ?>
+							<tr>
+							<td><?php echo constant('CARRIER_NAME_' . $i); ?></td><td valign="top"><?php echo zen_draw_input_field('track_id[' . $i . ']', '', 'size="50"'); ?></td>
+							</tr>
+							<?php } } ?>
 				</table>
 			</td>
 		</tr>
 	</table>      
-<!-- END TY TRACKER 10 - ENTER TRACKING INFORMATION -->
+<!-- END TY TRACKER 6 - ENTER TRACKING INFORMATION -->
 	</td>
       </tr>
       <tr>
@@ -1080,7 +1091,7 @@ if (($_GET['page'] == '' or $_GET['page'] <= 1) and $_GET['oID'] != '') {
 
       $contents = array('form' => zen_draw_form('orders', FILENAME_ORDERS, zen_get_all_get_params(array('oID', 'action')) . '&action=deleteconfirm', 'post', '', true) . zen_draw_hidden_field('oID', $oInfo->orders_id));
 //      $contents[] = array('text' => TEXT_INFO_DELETE_INTRO . '<br /><br /><strong>' . $cInfo->customers_firstname . ' ' . $cInfo->customers_lastname . '</strong>');
-     $contents[] = array('text' => TEXT_INFO_DELETE_INTRO . '<br /><br /><strong>' . ENTRY_ORDER_ID . $oInfo->orders_id . '<br />' . $oInfo->order_total . '<br />' . $oInfo->customers_name . ($oInfo->customers_company != '' ? '<br />' . $oInfo->customers_company : '') . '</strong>');
+      $contents[] = array('text' => TEXT_INFO_DELETE_INTRO . '<br /><br /><strong>' . ENTRY_ORDER_ID . $oInfo->orders_id . '<br />' . $oInfo->order_total . '<br />' . $oInfo->customers_name . ($oInfo->customers_company != '' ? '<br />' . $oInfo->customers_company : '') . '</strong>');
       $contents[] = array('text' => '<br />' . zen_draw_checkbox_field('restock') . ' ' . TEXT_INFO_RESTOCK_PRODUCT_QUANTITY);
       $contents[] = array('align' => 'center', 'text' => '<br />' . zen_image_submit('button_delete.gif', IMAGE_DELETE) . ' <a href="' . zen_href_link(FILENAME_ORDERS, zen_get_all_get_params(array('oID', 'action')) . 'oID=' . $oInfo->orders_id, 'NONSSL') . '">' . zen_image_button('button_cancel.gif', IMAGE_CANCEL) . '</a>');
       break;
@@ -1118,7 +1129,7 @@ if (($_GET['page'] == '' or $_GET['page'] <= 1) and $_GET['oID'] != '') {
 
       $contents[] = array('text' => '<br />' . zen_image(DIR_WS_IMAGES . 'pixel_black.gif','','100%','3'));
       $order = new order($oInfo->orders_id);
-      $contents[] = array('text' => 'Products Ordered: ' . sizeof($order->products) );
+      $contents[] = array('text' => TABLE_HEADING_PRODUCTS . ': ' . sizeof($order->products) );
       for ($i=0; $i<sizeof($order->products); $i++) {
         $contents[] = array('text' => $order->products[$i]['qty'] . '&nbsp;x&nbsp;' . $order->products[$i]['name']);
 
