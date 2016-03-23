@@ -126,7 +126,7 @@
 	};
     }
 
-       $messageStack->add('Ty Package Tracker v3.1.4 install completed!','success');
+       $messageStack->add('Ty Package Tracker v3.1.5 install completed!','success');
 
     // find next sort order in admin_pages table
     $sql = "SELECT (MAX(sort_order)+2) as sort FROM ".TABLE_ADMIN_PAGES;
