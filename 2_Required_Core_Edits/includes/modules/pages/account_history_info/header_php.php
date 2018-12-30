@@ -44,6 +44,7 @@ $statuses_query = "SELECT os.orders_status_name, osh.date_added, osh.comments, o
 $statuses_query = $db->bindVars($statuses_query, ':ordersID', $_GET['order_id'], 'integer');
 $statuses_query = $db->bindVars($statuses_query, ':languagesID', $_SESSION['languages_id'], 'integer');
 $statuses = $db->Execute($statuses_query);
+$statusArray = array();
 
 while (!$statuses->EOF) {
 
@@ -55,11 +56,11 @@ while (!$statuses->EOF) {
   'track_id2'=>$statuses->fields['track_id2'],
   'track_id3'=>$statuses->fields['track_id3'],
   'track_id4'=>$statuses->fields['track_id4'],
-  'track_id5'=>$statuses->fields['track_id5']);
+  'track_id5'=>$statuses->fields['track_id5']
+  );
   $statuses->MoveNext();
 }
 // End Ty Package Tracker
-
 
 require(DIR_WS_MODULES . zen_get_module_directory('require_languages.php'));
 $breadcrumb->add(NAVBAR_TITLE_1, zen_href_link(FILENAME_ACCOUNT, '', 'SSL'));
