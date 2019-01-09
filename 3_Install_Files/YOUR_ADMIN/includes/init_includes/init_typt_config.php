@@ -1,5 +1,5 @@
 <?php
-//$messageStack->add('Ty Package Tracker v3.1.5 install started','success');
+//$messageStack->add('Ty Package Tracker v3.1.6 install started','success');
 
     $typt_menu_title = 'Ty Package Tracker';
     $typt_menu_text = 'Settings for Ty Package Tracker Features';
@@ -72,7 +72,7 @@
     $db->Execute($sql);
 	$sql = "INSERT INTO ".TABLE_CONFIGURATION." (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES (NULL, 'Ty Package Tracker Module Switch', 'TY_TRACKER', 'False', 'If you have the either Edit Orders v4.x or Super Orders v4.x installed, set this option to TRUE so that the Ty Package Tracker fields will display in Edit Orders or Super Orders<br><br><strong><font color=red>YOU MUST HAVE EDIT ORDERS v4.x OR SUPER ORDERS v4.x INSTALLED TO USE THIS FEATURE!!</font></strong><br><br>\(Activating this flag without the required mod\(s\) installed <strong>WILL CAUSE ERRORS IN YOUR STORE!!!!</strong>\)', '".$typt_configuration_id."', 175, now(), now(), NULL, 'zen_cfg_select_option(array(\'True\', \'False\'), ')";
     $db->Execute($sql);
-	$sql = "INSERT INTO ".TABLE_CONFIGURATION." (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES (NULL, 'Current Ty Package Tracker Version', 'TY_TRACKER_VERSION ', '3.1.5', 'Version number (DO NOT MODIFY THIS VALUE)', '".$typt_configuration_id."', 0,  now(), now(), NULL, 'zen_cfg_select_option(array(''3.1.5''), ')";
+	$sql = "INSERT INTO ".TABLE_CONFIGURATION." (configuration_id, configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, last_modified, date_added, use_function, set_function) VALUES (NULL, 'Current Ty Package Tracker Version', 'TY_TRACKER_VERSION ', '3.1.6', 'Version number (DO NOT MODIFY THIS VALUE)', '".$typt_configuration_id."', 0,  now(), now(), NULL, 'zen_cfg_select_option(array(''3.1.6''), ')";
     $db->Execute($sql);
 
 // add columns to order table
@@ -126,7 +126,7 @@
 	};
     }
 
-       $messageStack->add('Ty Package Tracker v3.1.5 install completed!','success');
+       $messageStack->add('Ty Package Tracker v3.1.6 install completed!','success');
 
     // find next sort order in admin_pages table
     $sql = "SELECT (MAX(sort_order)+2) as sort FROM ".TABLE_ADMIN_PAGES;
