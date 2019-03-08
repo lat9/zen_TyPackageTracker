@@ -16,7 +16,7 @@
   $content = "";
   $content .= '<div id="' . str_replace('_', '-', $box_id . 'Content') . '" class="sideBoxContent">' . "\n";
   
-  if (sizeof($customer_orders)==0) {
+  if (is_array($customer_orders) && (sizeof($customer_orders)==0) {
      $content .= '<a href="' . zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, '','SSL') . '"> Track your orders </a>';
  }
   else {
