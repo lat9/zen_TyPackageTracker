@@ -15,10 +15,10 @@
  */
   $content = "";
   $content .= '<div id="' . str_replace('_', '-', $box_id . 'Content') . '" class="sideBoxContent">' . "\n";
-  
-  if (sizeof($customer_orders)==0) {
+
+  if (@sizeof($customer_orders)==0) {
      $content .= '<a href="' . zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, '','SSL') . '"> Track your orders </a>';
- }
+  }
   else {
 	  $content .= '<ul class="orderHistList">' . "\n" ;
 	  for ($i=1; $i<=sizeof($customer_orders); $i++) {
