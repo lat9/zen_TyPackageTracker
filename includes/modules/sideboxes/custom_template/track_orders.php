@@ -13,7 +13,10 @@
  ******************************************************************************
  * File ID: track_orders.php v2.2 by colosports
  */
+// test if track orders sidebox should show
+  $show_track_orders= false;
 
+if ($show_track_orders = true) {
   if ($_SESSION['customer_id']) {
 // retreive the last x products purchased
   $orders_history_query = "select o.orders_id, o.date_purchased
@@ -53,5 +56,5 @@
       $title =  BOX_HEADING_TRACK_ORDERS;
       $title_link = false;
       require($template->get_template_dir($column_box_default, DIR_WS_TEMPLATE, $current_page_base,'common') . '/' . $column_box_default);
-
+} // $show_track_orders
 ?>
