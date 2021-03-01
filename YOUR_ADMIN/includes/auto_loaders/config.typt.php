@@ -1,15 +1,28 @@
 <?php
-// Ty Package Tracker
-
+// -----
+// Part of the Ty Package Tracker plugin, v4.0.0 and later.
+//
+// Last updated 20210301-lat9 for v4.0.0
+//
 if (!defined('IS_ADMIN_FLAG')) {
-  die('Illegal Access');
-} 
+    die('Illegal Access');
+}
 
-
-$autoLoadConfig[999][] = array(
-  'autoType' => 'init_script',
-  'loadFile' => 'init_typt_config.php'
+// -----
+// Load, and instantiate, the plugin's admin observer.
+//
+$autoLoadConfig[71][] = array(
+    'autoType' => 'class',
+    'loadFile' => 'observers/TyPackageTrackerAdminObserver.php',
+    'classPath' => DIR_WS_CLASSES
+);
+$autoLoadConfig[71][] = array(
+    'autoType' => 'classInstantiate',
+    'className' => 'TyPackageTrackerAdminObserver',
+    'objectName' => 'typt'
 );
 
-// uncomment the following line to perform a uninstall
-// $uninstall = 'uninstall';
+$autoLoadConfig[999][] = array(
+    'autoType' => 'init_script',
+    'loadFile' => 'init_typt_config.php'
+);
