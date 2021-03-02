@@ -17,4 +17,10 @@ define('EMAIL_TEXT_COMMENTS_TRACKING_UPDATE', '<em>Items from your order will be
 // -----
 // Used to sprintf the carrier-name (%1$s), tracking-id (%2$s) and the carrier-link (%3$s) into the to-be-sent tracking-update email.
 //
-define('EMAIL_TEXT_TRACKID_UPDATE', "\n\n" . 'Your %1$s Tracking ID is %2$s' . "\n" . '<br><a href=\"%3$s\">Click here</a> to track your package.' . "\n" . '<br>If the above link does not work, copy the following URL address and paste it into your Web browser.' . "\n" . '<br>%3%s' . "\n\n" . '<br><br>It may take up to 24 hours for the tracking information to appear on the website.' . "\n<br>"');
+define('EMAIL_TEXT_TRACKID_UPDATE', "\n\n" . 'Your %1$s Tracking ID is %2$s' . "\n" . '<br><a href=\"%3$s\">Click here</a> to track your package.' . "\n" . '<br>If the above link does not work, copy the following URL address and paste it into your Web browser.' . "\n" . '<br>%3$s' . "\n\n" . '<br><br>It may take up to 24 hours for the tracking information to appear on the website.' . "\n<br>");
+
+// -----
+// Used by the plugin's initialization script to identify an initial installation or upgrade.
+//
+define('SUCCESS_TYPT_INSTALLED', 'Ty Package Tracker v%s has been successfully installed.');
+define('SUCCESS_TYPT_UPDATED', 'Ty Package Tracker has been successfully updated from v%1$s to v%2$s.');
