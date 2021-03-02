@@ -28,7 +28,7 @@ class TyPackageTrackerAdminObserver extends base
                 ]
             );
             
-            if (defined('EO_CURRENT_VERSION') && version_compare(EO_CURRENT_VERSION, '4.6.0', '>=')) {
+            if (TY_TRACKER === 'False') {
                 $this->attach(
                     $this,
                     [
