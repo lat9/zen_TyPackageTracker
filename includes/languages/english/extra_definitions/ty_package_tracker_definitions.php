@@ -11,6 +11,7 @@
 define('TABLE_HEADING_TRACKING_ID', 'Tracking ID');
 
 // -----
-// Identify the label associated with the "Track Orders" sidebox.
+// Identify constants associated with the "Track Orders" sidebox.
 //
 define('BOX_HEADING_TRACK_ORDERS', 'Track Orders');
+define('TRACK_ORDERS_ORDERNUM', 'Order #');

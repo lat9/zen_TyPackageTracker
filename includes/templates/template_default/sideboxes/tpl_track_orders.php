@@ -1,4 +1,9 @@
 <?php
+// -----
+// Part of the Ty Package Tracker plugin, v4.0.0 and later.
+//
+// Last updated 20210301-lat9 for v4.0.0
+//
 /*
  * This file is derived from tpl_order_history.php
  *
@@ -13,19 +18,12 @@
  ******************************************************************************
  * File ID: tpl_track_orders.php v3.1.4 by colosports
  */
-  $content = "";
-  $content .= '<div id="' . str_replace('_', '-', $box_id . 'Content') . '" class="sideBoxContent">' . "\n";
-  
-  if (sizeof($customer_orders)==0) {
-     $content .= '<a href="' . zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, '','SSL') . '"> Track your orders </a>';
- }
-  else {
-	  $content .= '<ul class="orderHistList">' . "\n" ;
-	  for ($i=1; $i<=sizeof($customer_orders); $i++) {
+$content = '<div id="' . str_replace('_', '-', $box_id . 'Content') . '" class="sideBoxContent">' . "\n";
 
-			$content .= '<li><a href="' . zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $customer_orders[$i]['id'],'SSL') . '">Order #' . $customer_orders[$i]['id'] . '</a></li>' . "\n" ;
-	  }
-	  $content .= '</ul>' . "\n" ;
-  }
-  $content .= '</div>';
-?>
+$content .= '<ul class="orderHistList">' . "\n";
+foreach ($track_orders as $track_order_id) {
+    $content .= '<li><a href="' . zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $track_order_id, 'SSL') . '">' . TRACK_ORDERS_ORDERNUM . $track_order_id . '</a></li>' . "\n";
+}
+$content .= '</ul>' . "\n";
+
+$content .= '</div>' . "\n";
