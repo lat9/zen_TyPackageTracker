@@ -12,18 +12,19 @@ The files listed below should be removed (or deleted) from the store's file-syst
 
 1. /includes/extra_datafiles/track_orders.php
 2. /includes/languages/english/tracker.php
-3. /includes/languages/english/YOUR_TEMPLATE/tracker.php
-4. /includes/modules/pages/tracker/header_php.php
-5. /includes/templates/YOUR_TEMPLATE/templates/tpl_tracker_default.php
-6. /YOUR_ADMIN/tracker.php
-7. /YOUR_ADMIN/images/icon_track.gif
-8. /YOUR_ADMIN/includes/typt_stylesheet.css
-9. /YOUR_ADMIN/includes/boxes/extra_boxes/tracker_customers_dhtml.php
-10. /YOUR_ADMIN/includes/extra_datafiles/tracker.php
-11. /YOUR_ADMIN/includes/extra_datafiles/typackage_filenames.php
-12. /YOUR_ADMIN/includes/functions/extra_functions/common_orders_functions.php
-13. /YOUR_ADMIN/includes/languages/english/tracker.php
-14. /YOUR_ADMIN/includes/languages/english/images/button_track.gif
+3. /includes/languages/english/extra_definitions/track_order.php
+4. /includes/languages/english/YOUR_TEMPLATE/tracker.php
+5. /includes/modules/pages/tracker/header_php.php
+6. /includes/templates/YOUR_TEMPLATE/templates/tpl_tracker_default.php
+7. /YOUR_ADMIN/tracker.php
+8. /YOUR_ADMIN/images/icon_track.gif
+9. /YOUR_ADMIN/includes/typt_stylesheet.css
+10. /YOUR_ADMIN/includes/boxes/extra_boxes/tracker_customers_dhtml.php
+11. /YOUR_ADMIN/includes/extra_datafiles/tracker.php
+12. /YOUR_ADMIN/includes/extra_datafiles/typackage_filenames.php
+13. /YOUR_ADMIN/includes/functions/extra_functions/common_orders_functions.php
+14. /YOUR_ADMIN/includes/languages/english/tracker.php
+15. /YOUR_ADMIN/includes/languages/english/images/button_track.gif
 
 ## Core-File Changes to Remove
 

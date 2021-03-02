@@ -9,3 +9,8 @@
 // Definition, used for account_history_info page's status-table column heading.
 //
 define('TABLE_HEADING_TRACKING_ID', 'Tracking ID');
+
+// -----
+// Identify the label associated with the "Track Orders" sidebox.
+//
+define('BOX_HEADING_TRACK_ORDERS', 'Track Orders');
