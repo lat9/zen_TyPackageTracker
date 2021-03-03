@@ -13,7 +13,14 @@ class TyPackageTrackerAdminObserver extends base
 {
     public function __construct() 
     {
+        // -----
+        // If the plugin's configuration is set, register for notifications from
+        // various admin elements associated with an order's status-history updates.
+        //
         if (defined('TY_TRACKER_VERSION')) {
+            // -----
+            // Always watch for notifications from the core Customers::Orders.
+            //
             $this->attach(
                 $this, 
                 [
@@ -21,14 +28,39 @@ class TyPackageTrackerAdminObserver extends base
                     'NOTIFY_ADMIN_ORDERS_STATUS_HISTORY_EXTRA_COLUMN_HEADING',
                     'NOTIFY_ADMIN_ORDERS_STATUS_HISTORY_EXTRA_COLUMN_DATA',
                     'NOTIFY_ADMIN_ORDERS_ADDL_HISTORY_INPUTS',
-
-                    /* From /includes/functions/functions_osh_update.php */
-                    'ZEN_UPDATE_ORDERS_HISTORY_PRE_EMAIL',
-                    'ZEN_UPDATE_ORDERS_HISTORY_BEFORE_INSERT',
                 ]
             );
             
-            if (TY_TRACKER === 'False') {
+            // -----
+            // The 'Edit Orders' integration is a tad complicated.  EO versions
+            // prior to v4.6.0 include TyPT integration when the 'TY_TRACKER' constant
+            // is defined and set to 'True' and handle the base order-status update directly
+            // rather than using the zen_update_orders_history function.  v4.4.0 and later of EO
+            // use that function to add the EO-specific, hidden comment to identify what changes
+            // were performed.
+            //
+            // Thus, we'll register for notifications from the zen_update_orders_history function
+            // UNLESS the request comes during EO operations and the EO version is less than 4.6.0.
+            //
+            $is_eo_access = (defined('FILENAME_EDIT_ORDERS') && $GLOBALS['current_page'] == (FILENAME_EDIT_ORDERS . '.php'));
+            $eo_supports_typt_notifications = (defined('EO_VERSION') && version_compare(EO_VERSION, '4.5.6', '>'));
+            if (!$is_eo_access || $eo_supports_typt_notifications) {
+                $this->attach(
+                    $this,
+                    [
+                        /* From /includes/functions/functions_osh_update.php */
+                        'ZEN_UPDATE_ORDERS_HISTORY_PRE_EMAIL',
+                        'ZEN_UPDATE_ORDERS_HISTORY_BEFORE_INSERT',
+                    ]
+                );
+            }
+
+            // -----
+            // If the plugin is configured to also inject its form-fields and updates
+            // for the 'Edit Orders' display and the EO version supports the required
+            // notifications for TyPT, monitor for the EO-related notifications as well.
+            //
+            if (TY_TRACKER === 'False' && $is_eo_access && $eo_supports_typt_notifications) {
                 $this->attach(
                     $this,
                     [
@@ -126,7 +158,7 @@ class TyPackageTrackerAdminObserver extends base
             //
             // $p1 ... Contains the fields associated with the current status-history record
             // $p2 ... A reference to a variable to be updated with the associated data to be displayed.
-            //                
+            //
             case 'NOTIFY_ADMIN_ORDERS_STATUS_HISTORY_EXTRA_COLUMN_DATA':
                 if (!is_array($p2)) {
                     $p2 = [];
@@ -157,7 +189,7 @@ class TyPackageTrackerAdminObserver extends base
             // -----
             // Issued by /admin/edit_orders.php, just prior to the display of the order's current
             // status-history table.  We'll inject the information, letting EO know how to display the
-            // fields associated with Ty Package Tracker.
+            // fields associated with Ty Package Tracker in the order's status-history table.
             //
             // On entry:
             //
@@ -187,6 +219,10 @@ class TyPackageTrackerAdminObserver extends base
                 $p2 = $table_elements;
                 break;
 
+            // -----
+            // Issued by /admin/edit_orders.php, within the status-update form just after the text-area
+            // comments block.  We'll add the TyPT form fields to the display.
+            //
             case 'EDIT_ORDERS_ADDITIONAL_OSH_CONTENT':
                 ob_start();
                 require DIR_WS_MODULES . 'ty_package_tracker/tpl_package_tracker_eo_form.php';
