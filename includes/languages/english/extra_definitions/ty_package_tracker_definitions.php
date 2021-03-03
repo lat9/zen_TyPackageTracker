@@ -15,3 +15,4 @@ define('TABLE_HEADING_TRACKING_ID', 'Tracking ID');
 //
 define('BOX_HEADING_TRACK_ORDERS', 'Track Orders');
 define('TRACK_ORDERS_ORDERNUM', 'Order #');
+define('TRACK_ORDERS_DATE', ', placed on: ');

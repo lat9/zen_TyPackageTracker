@@ -21,7 +21,7 @@
 if (zen_is_logged_in() && !zen_in_guest_checkout()) {
     $track_orders_limit = (ctype_digit(MAX_DISPLAY_PRODUCTS_IN_TRACK_ORDERS_BOX)) ? MAX_DISPLAY_PRODUCTS_IN_TRACK_ORDERS_BOX : '3';
     $orders_history = $db->Execute(
-        "SELECT orders_id
+        "SELECT orders_id, date_purchased
            FROM " . TABLE_ORDERS . "
           WHERE customers_id = " . (int)$_SESSION['customer_id'] . "
           ORDER BY date_purchased DESC
@@ -31,7 +31,7 @@ if (zen_is_logged_in() && !zen_in_guest_checkout()) {
     if (!$orders_history->EOF) {
         $track_orders = [];
         foreach ($orders_history as $track_history) {
-            $track_orders[] = $track_history['orders_id'];
+            $track_orders[] = $track_history;
         }
         
         require $template->get_template_dir('tpl_track_orders.php', DIR_WS_TEMPLATE, $current_page_base, 'sideboxes') . '/tpl_track_orders.php';

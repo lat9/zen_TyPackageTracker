@@ -21,8 +21,12 @@
 $content = '<div id="' . str_replace('_', '-', $box_id . 'Content') . '" class="sideBoxContent">' . "\n";
 
 $content .= '<ul class="orderHistList">' . "\n";
-foreach ($track_orders as $track_order_id) {
-    $content .= '<li><a href="' . zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $track_order_id, 'SSL') . '">' . TRACK_ORDERS_ORDERNUM . $track_order_id . '</a></li>' . "\n";
+foreach ($track_orders as $next_track) {
+    $track_order_id = $next_track['orders_id'];
+    $track_purchase_date = TRACK_ORDERS_DATE . zen_date_short($next_track['date_purchased']);
+    $content .= '<li>';
+    $content .= '<a href="' . zen_href_link(FILENAME_ACCOUNT_HISTORY_INFO, 'order_id=' . $track_order_id, 'SSL') . '">' . TRACK_ORDERS_ORDERNUM . $track_order_id . '</a>' . $track_purchase_date;
+    $content .= '</li>' . "\n";
 }
 $content .= '</ul>' . "\n";
 
