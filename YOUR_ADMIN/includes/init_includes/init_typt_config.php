@@ -86,7 +86,7 @@ if (!defined('TY_TRACKER_VERSION')) {
 
             ('Max display for Track Order sidebox', 'MAX_DISPLAY_PRODUCTS_IN_TRACK_ORDERS_BOX', '3', 'The maximum number of orders to display on the Track Order sidebox.', $cgi, 170, now(), NULL, NULL),
 
-            ('Ty Package Tracker Module Switch', 'TY_TRACKER', 'False', 'For interoperation with Edit Orders.  Versions prior to v4.6.0 include the package-tracker handling, but follow-on versions do not.  Set this value to <em>True</em> for EO versions < 4.6.0 and <em>False</em> (the default) for EO versions >= 4.6.0.', $cgi, 175, now(), NULL, 'zen_cfg_select_option(array(\'True\', \'False\'),')"
+            ('<em>Edit Orders</em> Mode', 'TY_TRACKER', 'False', 'Versions prior to v4.6.0 include the package-tracker handling, but follow-on versions do not.  Set this value to <em>True</em> for EO versions &lt; 4.6.0 and <em>False</em> (the default) for EO versions &gt;= 4.6.0.', $cgi, 175, now(), NULL, 'zen_cfg_select_option(array(\'True\', \'False\'),')"
     );
 
     // -----
@@ -133,6 +133,13 @@ if (TY_TRACKER_VERSION != TY_TRACKER_CURRENT_VERSION) {
                     MODIFY COLUMN track_id3 varchar(255),
                     MODIFY COLUMN track_id4 varchar(255),
                     MODIFY COLUMN track_id5 varchar(255)"
+            );
+            $db->Execute(
+                "UPDATE " . TABLE_CONFIGURATION . "
+                    SET configuration_title = '<em>Edit Orders</em> Mode',
+                        configuration_description = 'Versions prior to v4.6.0 include the package-tracker handling, but follow-on versions do not.  Set this value to <em>True</em> for EO versions &lt; 4.6.0 and <em>False</em> (the default) for EO versions &gt;= 4.6.0.'
+                  WHERE configuration_key = 'TY_TRACKER'
+                  LIMIT 1"
             );
 
         default:                                        //-Fall through from above
