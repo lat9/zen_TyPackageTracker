@@ -1,9 +1,6 @@
-Ty Package Tracker for Zen Cart v3.1.6
+Ty Package Tracker for Zen Cart
 =======
-Changelog
----------------
-<p>Version 3.1.6 - 12/27/2018</p>
-<ul>
-<li>Updated for Zen Cart v1.5.6 (jeking)</li>
-<li>Removed integration with Super Orders and Edit Orders. (jeking)</li>
-</ul>
+## Current Version: 3.1.6
+
+- _**Download from Zen Cart**_: https://www.zen-cart.com/downloads.php?do=file&id=75
+- _**Zen Cart Support Thread**_: https://www.zen-cart.com/forum/showthread.php?t=36126
