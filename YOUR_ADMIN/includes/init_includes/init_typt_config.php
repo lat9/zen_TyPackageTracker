@@ -16,7 +16,7 @@ if (!isset($_SESSION['admin_id'])) {
     return;
 }
 
-define('TY_TRACKER_CURRENT_VERSION', '4.0.0-beta1');
+define('TY_TRACKER_CURRENT_VERSION', '4.0.0');
 
 // -----
 // Locate the existing or create a new configuration group for the TyPT settings.

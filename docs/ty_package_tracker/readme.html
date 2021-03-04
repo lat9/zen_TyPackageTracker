@@ -45,7 +45,7 @@ body {
 <section class="py-5 header">
     <div class="container py-4">
         <header class="pb-2">
-            <h1 class="display-4 text-center">Ty Package Tracker v4.0.0-beta1</h1>
+            <h1 class="display-4 text-center">Ty Package Tracker v4.0.0</h1>
             <ul>
                 <li>Zen Cart download link: <a href="https://www.zen-cart.com/downloads.php?do=file&id=75" target="_blank">https://www.zen-cart.com/downloads.php?do=file&id=75</a></li>
                 <li>Zen Cart support thread: <a href="https://www.zen-cart.com/forum/showthread.php?t=36126" target="_blank">https://www.zen-cart.com/forum/showthread.php?t=36126</a></li>
@@ -108,7 +108,7 @@ body {
                             <li>Unzip the plugin's zip-file distribution.</li>
                             <li>If your store's active template includes changes to <code>/templates/tpl_account_history_info_default.php</code>, you'll need to merge the <em>TyPT</em> changes provided in the distribution's <code>/includes/templates/YOUR_TEMPLATE/templates/tpl_account_history_info_default.php</code> with that pre-existing file.  Otherwise, copy that distributed file to your current template's <code>/templates</code> sub-directory.</li>
                             <li>Copy all files from the distribution's <code>/YOUR_ADMIN</code> sub-directory to your site's admin sub-directory.</li>
-                            <li>Copy all files from the distribution's <code>/includes</code> sub-directory (other than the <code>/includes/templates/YOUR_TEMPLATE</code> to your site's <code>/includes</code> sub-directory.</li>
+                            <li>Copy all files from the distribution's <code>/includes</code> sub-directory (other than <code>/includes/templates/YOUR_TEMPLATE</code>) to your site's <code>/includes</code> sub-directory.</li>
                             <li>Log into your Zen Cart admin to cause the plugin's installation script to run, then refer to this readme's <b><em>How to Use</em></b> tab to configure the plugin for your use.</li>
                         </ol>
                         <div class="card mt-3">
@@ -300,6 +300,7 @@ body {
                             <li>/YOUR_ADMIN/images/icon_track_add.png</li>
                             <li>/YOUR_ADMIN/includes/auto_loaders/config.typt.php</li>
                             <li>/YOUR_ADMIN/includes/classes/observers/TyPackageTrackerAdminObserver.php</li>
+                            <li>/YOUR_ADMIN/includes/functions/ty_package_tracker_functions.php</li>
                             <li>/YOUR_ADMIN/includes/init_includes/init_typt_config.php</li>
                             <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/ty_package_tracker_admin_definitions.php</li>
                             <li>/YOUR_ADMIN/includes/modules/ty_package_tracker/tpl_package_tracker_eo_form.php</li>
