@@ -21,10 +21,11 @@ The files listed below should be removed (or deleted) from the store's file-syst
 9. /YOUR_ADMIN/includes/typt_stylesheet.css
 10. /YOUR_ADMIN/includes/boxes/extra_boxes/tracker_customers_dhtml.php
 11. /YOUR_ADMIN/includes/extra_datafiles/tracker.php
-12. /YOUR_ADMIN/includes/extra_datafiles/typackage_filenames.php
-13. /YOUR_ADMIN/includes/functions/extra_functions/common_orders_functions.php
-14. /YOUR_ADMIN/includes/languages/english/tracker.php
-15. /YOUR_ADMIN/includes/languages/english/images/button_track.gif
+12. /YOUR_ADMIN/includes/extra_datafiles/typackage_defines.php
+13. /YOUR_ADMIN/includes/extra_datafiles/typackage_filenames.php
+14. /YOUR_ADMIN/includes/functions/extra_functions/common_orders_functions.php
+15. /YOUR_ADMIN/includes/languages/english/tracker.php
+16. /YOUR_ADMIN/includes/languages/english/images/button_track.gif
 
 ## Core-File Changes to Remove
 

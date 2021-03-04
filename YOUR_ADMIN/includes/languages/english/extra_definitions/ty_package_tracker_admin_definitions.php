@@ -24,3 +24,8 @@ define('EMAIL_TEXT_TRACKID_UPDATE', "\n\n" . 'Your %1$s Tracking ID is %2$s' . "
 //
 define('SUCCESS_TYPT_INSTALLED', 'Ty Package Tracker v%s has been successfully installed.');
 define('SUCCESS_TYPT_UPDATED', 'Ty Package Tracker has been successfully updated from v%1$s to v%2$s.');
+
+// -----
+// Defines the label used for the plugin's configuration settings.
+//
+define('BOX_CONFIGURATION_TY_PACKAGE_TRACKER', 'Ty Package Tracker');
