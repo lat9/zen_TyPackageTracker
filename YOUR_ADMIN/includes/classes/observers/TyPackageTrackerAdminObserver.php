@@ -43,7 +43,7 @@ class TyPackageTrackerAdminObserver extends base
             // UNLESS the request comes during EO operations and the EO version is less than 4.6.0.
             //
             $is_eo_access = (defined('FILENAME_EDIT_ORDERS') && $GLOBALS['current_page'] == (FILENAME_EDIT_ORDERS . '.php'));
-            $eo_supports_typt_notifications = (defined('EO_VERSION') && version_compare(EO_VERSION, '4.5.6', '>'));
+            $eo_supports_typt_notifications = (defined('EO_VERSION') && version_compare(EO_VERSION, '4.6.0', '>='));
             if (!$is_eo_access || $eo_supports_typt_notifications) {
                 $this->attach(
                     $this,
