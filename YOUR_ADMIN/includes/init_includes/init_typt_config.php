@@ -16,7 +16,7 @@ if (!isset($_SESSION['admin_id'])) {
     return;
 }
 
-define('TY_TRACKER_CURRENT_VERSION', '4.0.0');
+define('TY_TRACKER_CURRENT_VERSION', '4.0.1-beta1');
 
 // -----
 // Locate the existing or create a new configuration group for the TyPT settings.
@@ -49,7 +49,7 @@ if (!defined('TY_TRACKER_VERSION')) {
     // Add configuration elements.
     //
     $db->Execute(
-        "INSERT INTO " . TABLE_CONFIGURATION . "
+        "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
             (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added, use_function, set_function)
          VALUES
             ('Current Ty Package Tracker Version', 'TY_TRACKER_VERSION', '0.0.0', 'Version number.', $cgi, 0, now(), NULL, 'zen_cfg_select_option(array(\'0.0.0\'),'),
@@ -92,20 +92,24 @@ if (!defined('TY_TRACKER_VERSION')) {
     // -----
     // Add columns to the orders_status_history table, one for each 'track_id'.
     //
-    $db->Execute(
-        "ALTER TABLE " . TABLE_ORDERS_STATUS_HISTORY . "
-            ADD track_id1 varchar(255) default NULL,
-            ADD track_id2 varchar(255) default NULL,
-            ADD track_id3 varchar(255) default NULL,
-            ADD track_id4 varchar(255) default NULL,
-            ADD track_id5 varchar(255) default NULL"
-    );
+    if (!sniffer->field_exists(TABLE_ORDERS_STATUS_HISTORY, 'track_id1')) {
+        $db->Execute(
+            "ALTER TABLE " . TABLE_ORDERS_STATUS_HISTORY . "
+                ADD track_id1 varchar(255) default NULL,
+                ADD track_id2 varchar(255) default NULL,
+                ADD track_id3 varchar(255) default NULL,
+                ADD track_id4 varchar(255) default NULL,
+                ADD track_id5 varchar(255) default NULL"
+        );
+    }
 
     // -----
     // Add the plugin's configuration menu to the admin's menus.
     //
-    zen_register_admin_page('configTyPackageTracker', 'BOX_CONFIGURATION_TY_PACKAGE_TRACKER', 'FILENAME_CONFIGURATION', "gID=$cgi", 'configuration', 'Y');
-    
+    if (!zen_page_key_exists('configTyPackageTracker')) {
+        zen_register_admin_page('configTyPackageTracker', 'BOX_CONFIGURATION_TY_PACKAGE_TRACKER', 'FILENAME_CONFIGURATION', "gID=$cgi", 'configuration', 'Y');
+    }
+
     // -----
     // Initialize the installed version to indicate an initial install.
     //
