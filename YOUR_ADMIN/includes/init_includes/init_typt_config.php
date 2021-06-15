@@ -92,7 +92,7 @@ if (!defined('TY_TRACKER_VERSION')) {
     // -----
     // Add columns to the orders_status_history table, one for each 'track_id'.
     //
-    if (!sniffer->field_exists(TABLE_ORDERS_STATUS_HISTORY, 'track_id1')) {
+    if (!$sniffer->field_exists(TABLE_ORDERS_STATUS_HISTORY, 'track_id1')) {
         $db->Execute(
             "ALTER TABLE " . TABLE_ORDERS_STATUS_HISTORY . "
                 ADD track_id1 varchar(255) default NULL,
