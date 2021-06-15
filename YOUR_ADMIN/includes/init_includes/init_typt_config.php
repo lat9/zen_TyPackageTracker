@@ -3,7 +3,7 @@
 // Part of the Ty Package Tracker plugin, v4.0.0 and later.  Performs the plugin's database
 // initialization and/or update.
 //
-// Last updated 20210301-lat9 for v4.0.0
+// Last updated 20210615-lat9 for v4.0.1
 //
 if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG !== true) {
     die('Illegal Access');
@@ -16,7 +16,7 @@ if (!isset($_SESSION['admin_id'])) {
     return;
 }
 
-define('TY_TRACKER_CURRENT_VERSION', '4.0.1-beta1');
+define('TY_TRACKER_CURRENT_VERSION', '4.0.1-beta2');
 
 // -----
 // Locate the existing or create a new configuration group for the TyPT settings.

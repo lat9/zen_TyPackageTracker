@@ -3,7 +3,7 @@
 // Part of the Ty Package Tracker plugin, v4.0.0 and later.  Provides integration with the
 // admin's Customers :: Orders and Edit Orders display and update of an order's tracking information.
 //
-// Last updated 20210301-lat9 for v4.0.0
+// Last updated 20210615-lat9 for v4.0.1
 //
 if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG !== true) {
     die('Illegal Access');
@@ -33,17 +33,17 @@ class TyPackageTrackerAdminObserver extends base
             
             // -----
             // The 'Edit Orders' integration is a tad complicated.  EO versions
-            // prior to v4.6.0 include TyPT integration when the 'TY_TRACKER' constant
+            // prior to v4.6.0-beta1 include TyPT integration when the 'TY_TRACKER' constant
             // is defined and set to 'True' and handle the base order-status update directly
             // rather than using the zen_update_orders_history function.  v4.4.0 and later of EO
             // use that function to add the EO-specific, hidden comment to identify what changes
             // were performed.
             //
             // Thus, we'll register for notifications from the zen_update_orders_history function
-            // UNLESS the request comes during EO operations and the EO version is less than 4.6.0.
+            // UNLESS the request comes during EO operations and the EO version is less than 4.6.0-beta1.
             //
             $is_eo_access = (defined('FILENAME_EDIT_ORDERS') && $GLOBALS['current_page'] == (FILENAME_EDIT_ORDERS . '.php'));
-            $eo_supports_typt_notifications = (defined('EO_VERSION') && version_compare(EO_VERSION, '4.6.0', '>='));
+            $eo_supports_typt_notifications = (defined('EO_VERSION') && version_compare(EO_VERSION, '4.6.0-beta1', '>='));
             if (!$is_eo_access || $eo_supports_typt_notifications) {
                 $this->attach(
                     $this,
@@ -264,7 +264,7 @@ class TyPackageTrackerAdminObserver extends base
         }
         if (!empty($field_value)) {
             $track_id = nl2br(zen_output_string_protected($field_value));
-            $this->eo_field_display .= (constant("CARRIER_NAME_$ty") . ': <a href="' . constant("CARRIER_LINK_$ty") . $track_id . ' target="_blank" rel="noreferrer noopener">' . $track_id . '</a>&nbsp;');
+            $this->eo_field_display .= (constant("CARRIER_NAME_$ty") . ': <a href="' . constant("CARRIER_LINK_$ty") . $track_id . '" target="_blank" rel="noreferrer noopener">' . $track_id . '</a>&nbsp;');
         }
         return $this->eo_field_display;
     }

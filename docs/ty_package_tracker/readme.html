@@ -208,8 +208,10 @@ body {
                         <p>Based on Ty Package Tracker v2.3a by Ty Lieu (original author)</p>
                         <ul>
                             <li>v4.0.1-beta1, 2021-06-14 (lat9):<ul>
-                                <li>BUGFIX:  Correcting initial-install issues for some forms of upgrade.</li>
+                                <li>BUGFIX: Correcting initial-install issues for some forms of upgrade.</li>
+                                <li>BUGFIX: Correcting malformed link for tracking ID during admin processing.</li>
                                 <li>The following files were changed:<ol>
+                                    <li>/YOUR_ADMIN/includes/classes/observers/TyPackageTrackerAdminObserver.php</li>
                                     <li>/YOUR_ADMIN/includes/init_includes/init_typt_config.php</li>
                                 </ol></li>
                             </ul>
