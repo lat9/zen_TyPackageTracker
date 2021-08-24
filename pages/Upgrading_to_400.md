@@ -56,7 +56,7 @@ define('TABLE_HEADING_TRACKING_ID', 'Tracking ID');
 
 If those were the only changes to the file, when compared to `/includes/languages/english/account_history_info.php`, you can safely remove this template-override file.  That definition now resides in `/includes/languages/english/extra_definitions/ty_package_tracker_definitions.php`.
 
-#### /includes/modules/pages/account_history_info.php
+#### /includes/modules/pages/account_history_info/header_php.php
 
 Remove the ***TyPT***-specific changes to this file, noting that the changes might be slightly different, based on your Zen Cart version.
 
