@@ -1,24 +1,26 @@
 <?php
 /**
- * Page Template
+ * Displays information related to a single specific order, both for checkout_success and in account_history_info
  *
- * Loaded automatically by index.php?main_page=account_edit.<br />
- * Displays information related to a single specific order
- *
- * @copyright Copyright 2003-2020 Zen Cart Development Team
+ * @copyright Copyright 2003-2024 Zen Cart Development Team
  * @copyright Portions Copyright 2003 osCommerce
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
- * @version $Id: DrByte 2020 Oct 19 Modified in v1.5.7a $
+ * @version $Id: Nick Fenwick 2023 Nov 22 Modified in v2.0.0-alpha1 $
  */
 ?>
 <div class="centerColumn" id="accountHistInfo">
 
 <div class="forward"><?php echo HEADING_ORDER_DATE . ' ' . zen_date_long($order->info['date_purchased']); ?></div>
-<br class="clearBoth" />
+<br class="clearBoth">
 
 <?php if ($current_page != FILENAME_CHECKOUT_SUCCESS) { ?>
 <h2 id="orderHistoryDetailedOrder"><?php echo HEADING_TITLE . ORDER_HEADING_DIVIDER . sprintf(HEADING_ORDER_NUMBER, zen_output_string_protected($_GET['order_id'])); ?></h2>
-<?php } ?>
+
+<?php }
+
+$extra_headings = [];
+$zco_notifier->notify('NOTIFY_ACCOUNT_HISTORY_INFO_EXTRA_COLUMN_HEADING', $order, $extra_headings);
+?>
 
 <table id="orderHistoryHeading">
     <tr class="tableHeading">
@@ -32,20 +34,30 @@
  }
 ?>
         <th scope="col" id="myAccountTotal"><?php echo HEADING_TOTAL; ?></th>
+<?php
+  if (is_array($extra_headings)) {
+    foreach ($extra_headings as $heading_info) {
+?>
+        <th scope="col"<?php echo empty($heading_info['params']) ? '' : " {$heading_info['params']}" ?>><?php echo $heading_info['text']; ?></th>
+<?php
+    }
+  }
+?>
     </tr>
 <?php
-  for ($i=0, $n=sizeof($order->products); $i<$n; $i++) {
+  foreach($order->products as $op) {
+    $extra_data = [];
+    $zco_notifier->notify('NOTIFY_ACCOUNT_HISTORY_INFO_EXTRA_COLUMN_DATA', [ 'order' => $order, 'orders_product' => $op ], $extra_data);
   ?>
     <tr>
-        <td class="accountQuantityDisplay"><?php echo  $order->products[$i]['qty'] . QUANTITY_SUFFIX; ?></td>
-        <td class="accountProductDisplay"><?php
-
-            echo  $order->products[$i]['name'];
-
-    if ( (isset($order->products[$i]['attributes'])) && (sizeof($order->products[$i]['attributes']) > 0) ) {
+        <td class="accountQuantityDisplay"><?php echo $op['qty'] . CART_QUANTITY_SUFFIX; ?></td>
+        <td class="accountProductDisplay">
+<a href="<?php echo zen_href_link(zen_get_info_page($op['id']), 'products_id=' . $op['id']); ?>"><?php echo $op['name']; ?></a>
+<?php
+    if (isset($op['attributes']) && !empty($op['attributes'])) {
       echo '<ul class="orderAttribsList">';
-      for ($j=0, $n2=sizeof($order->products[$i]['attributes']); $j<$n2; $j++) {
-        echo '<li>' . $order->products[$i]['attributes'][$j]['option'] . TEXT_OPTION_DIVIDER . nl2br(zen_output_string_protected($order->products[$i]['attributes'][$j]['value'])) . '</li>';
+      foreach($op['attributes'] as $attr) {
+        echo '<li>' . $attr['option'] . TEXT_OPTION_DIVIDER . nl2br(zen_output_string_protected($attr['value'])) . '</li>';
       }
         echo '</ul>';
     }
@@ -54,30 +66,39 @@
 <?php
     if (isset($order->info['tax_groups']) && count($order->info['tax_groups']) > 1) {
 ?>
-        <td class="accountTaxDisplay"><?php echo zen_display_tax_value($order->products[$i]['tax']) . '%' ?></td>
+        <td class="accountTaxDisplay"><?php echo zen_display_tax_value($op['tax']) . '%' ?></td>
 <?php
     }
 ?>
         <td class="accountTotalDisplay">
         <?php
-         $ppe = zen_round(zen_add_tax($order->products[$i]['final_price'], $order->products[$i]['tax']), $currencies->get_decimal_places($order->info['currency']));
-         $ppt = $ppe * $order->products[$i]['qty'];
-        //        echo $currencies->format(zen_add_tax($order->products[$i]['final_price'], $order->products[$i]['tax']) * $order->products[$i]['qty'], true, $order->info['currency'], $order->info['currency_value']) . ($order->products[$i]['onetime_charges'] != 0 ? '<br />' . $currencies->format(zen_add_tax($order->products[$i]['onetime_charges'], $order->products[$i]['tax']), true, $order->info['currency'], $order->info['currency_value']) : '')
-        echo $currencies->format($ppt, true, $order->info['currency'], $order->info['currency_value']) . ($order->products[$i]['onetime_charges'] != 0 ? '<br />' . $currencies->format(zen_add_tax($order->products[$i]['onetime_charges'], $order->products[$i]['tax']), true, $order->info['currency'], $order->info['currency_value']) : '');
+         $ppe = zen_round(zen_add_tax($op['final_price'], $op['tax']), $currencies->get_decimal_places($order->info['currency']));
+         $ppt = $ppe * $op['qty'];
+        //        echo $currencies->format(zen_add_tax($op['final_price'], $op['tax']) * $op['qty'], true, $order->info['currency'], $order->info['currency_value']) . ($op['onetime_charges'] != 0 ? '<br>' . $currencies->format(zen_add_tax($op['onetime_charges'], $op['tax']), true, $order->info['currency'], $order->info['currency_value']) : '')
+        echo $currencies->format($ppt, true, $order->info['currency'], $order->info['currency_value']) . ($op['onetime_charges'] != 0 ? '<br>' . $currencies->format(zen_add_tax($op['onetime_charges'], $op['tax']), true, $order->info['currency'], $order->info['currency_value']) : '');
         ?></td>
+<?php
+    if (!empty($extra_data)) {
+      foreach ($extra_data as $data_info) {
+?>
+        <td<?php echo empty($data_info['params']) ? '' : " {$data_info['params']}" ?>><?php echo $data_info['text']; ?></td>
+<?php
+      }
+    }
+?>
     </tr>
 <?php
   }
 ?>
 </table>
-<hr />
+<hr>
 <div id="orderTotals">
 <?php
-  for ($i=0, $n=sizeof($order->totals); $i<$n; $i++) {
+  foreach($order->totals as $ot) {
 ?>
-     <div class="amount larger forward"><?php echo $order->totals[$i]['text'] ?></div>
-     <div class="lineTitle larger forward"><?php echo $order->totals[$i]['title'] ?></div>
-<br class="clearBoth" />
+     <div class="amount larger forward"><?php echo $ot['text'] ?></div>
+     <div class="lineTitle larger forward"><?php echo $ot['title'] ?></div>
+<br class="clearBoth">
 <?php
   }
 ?>
@@ -96,7 +117,7 @@
 /**
  * Used to loop thru and display order status information
  */
-if (sizeof($statusArray)) {
+if (!empty($order->statuses)) {
 ?>
 
 <h2 id="orderHistoryStatus"><?php echo HEADING_ORDER_HISTORY; ?></h2>
@@ -107,8 +128,12 @@ if (sizeof($statusArray)) {
         <th scope="col" id="myAccountStatusComments"><?php echo TABLE_HEADING_STATUS_COMMENTS; ?></th>
        </tr>
 <?php
-  $first = true; 
-  foreach ($statusArray as $statuses) {
+  // -----
+  // The *first* comment, made by the customer, is 'protected' from using HTML taga; all others are
+  // made by the admin or a 'known' entity and HTML is allowed.
+  //
+  $protected = true;
+  foreach ($order->statuses as $statuses) {
 ?>
     <tr>
         <td><?php echo zen_date_short($statuses['date_added']); ?></td>
@@ -117,22 +142,19 @@ if (sizeof($statusArray)) {
 <?php 
 //-bof-ty_package_tracker  *** 1 of 1 ***
     $display_track_id = '';
-    $display_track_id .= (!empty($statuses['track_id1'])) ? '<b>' . CARRIER_NAME_1 . '</b>' . ':&nbsp;&nbsp;<a href="'. CARRIER_LINK_1 . nl2br(zen_output_string_protected($statuses['track_id1'])) . '" target="_blank" rel="noopener noreferrer">' . nl2br(zen_output_string_protected($statuses['track_id1'])) . '</a>' : '';
-    $display_track_id .= (!empty($statuses['track_id2'])) ? '<b>' . CARRIER_NAME_2 . '</b>' . ':&nbsp;&nbsp;<a href="' . CARRIER_LINK_2 . nl2br(zen_output_string_protected($statuses['track_id2'])) . '" target="_blank" rel="noopener noreferrer">' . nl2br(zen_output_string_protected($statuses['track_id2'])) . '</a>' : '';
-    $display_track_id .= (!empty($statuses['track_id3'])) ? '<b>' . CARRIER_NAME_3 . '</b>' . ':&nbsp;&nbsp;<a href="' . CARRIER_LINK_3 . nl2br(zen_output_string_protected($statuses['track_id3'])) . '" target="_blank" rel="noopener noreferrer">' . nl2br(zen_output_string_protected($statuses['track_id3'])) . '</a>' : '';
-    $display_track_id .= (!empty($statuses['track_id4'])) ? '<b>' . CARRIER_NAME_4 . '</b>' . ':&nbsp;&nbsp;<a href="' . CARRIER_LINK_4 . nl2br(zen_output_string_protected($statuses['track_id4'])) . '" target="_blank" rel="noopener noreferrer">' . nl2br(zen_output_string_protected($statuses['track_id4'])) . '</a>' : '';
-    $display_track_id .= (!empty($statuses['track_id5'])) ? '<b>' . CARRIER_NAME_5 . '</b>' . ':&nbsp;&nbsp;<a href="' . CARRIER_LINK_5 . nl2br(zen_output_string_protected($statuses['track_id5'])) . '" target="_blank" rel="noopener noreferrer">' . nl2br(zen_output_string_protected($statuses['track_id5'])) . '</a>' : '';
+    if (defined('TY_TRACKER_VERSION')) {
+        $display_track_id .= (!empty($statuses['track_id1'])) ? '<b>' . CARRIER_NAME_1 . '</b>' . ':&nbsp;&nbsp;<a href="' . CARRIER_LINK_1 . nl2br(zen_output_string_protected($statuses['track_id1'])) . '" target="_blank" rel="noopener noreferrer">' . nl2br(zen_output_string_protected($statuses['track_id1'])) . '</a>' : '';
+        $display_track_id .= (!empty($statuses['track_id2'])) ? '<b>' . CARRIER_NAME_2 . '</b>' . ':&nbsp;&nbsp;<a href="' . CARRIER_LINK_2 . nl2br(zen_output_string_protected($statuses['track_id2'])) . '" target="_blank" rel="noopener noreferrer">' . nl2br(zen_output_string_protected($statuses['track_id2'])) . '</a>' : '';
+        $display_track_id .= (!empty($statuses['track_id3'])) ? '<b>' . CARRIER_NAME_3 . '</b>' . ':&nbsp;&nbsp;<a href="' . CARRIER_LINK_3 . nl2br(zen_output_string_protected($statuses['track_id3'])) . '" target="_blank" rel="noopener noreferrer">' . nl2br(zen_output_string_protected($statuses['track_id3'])) . '</a>' : '';
+        $display_track_id .= (!empty($statuses['track_id4'])) ? '<b>' . CARRIER_NAME_4 . '</b>' . ':&nbsp;&nbsp;<a href="' . CARRIER_LINK_4 . nl2br(zen_output_string_protected($statuses['track_id4'])) . '" target="_blank" rel="noopener noreferrer">' . nl2br(zen_output_string_protected($statuses['track_id4'])) . '</a>' : '';
+        $display_track_id .= (!empty($statuses['track_id5'])) ? '<b>' . CARRIER_NAME_5 . '</b>' . ':&nbsp;&nbsp;<a href="' . CARRIER_LINK_5 . nl2br(zen_output_string_protected($statuses['track_id5'])) . '" target="_blank" rel="noopener noreferrer">' . nl2br(zen_output_string_protected($statuses['track_id5'])) . '</a>' : '';
+    }
 
     if ($display_track_id !== '' && !empty($statuses['comments'])) {
         $display_track_id = '<br>' . $display_track_id;
     }
     if (!empty($statuses['comments']) || $display_track_id !== '') {
-      if ($first) { 
-         echo nl2br(zen_output_string_protected($statuses['comments'])) . $display_track_id;
-         $first = false; 
-      } else {
-         echo nl2br(zen_output_string($statuses['comments'])) . $display_track_id;
-      }
+         echo nl2br(zen_output_string($statuses['comments'], false, $protected)) . $display_track_id;
     }
 ?>
        </td> 
@@ -141,29 +163,30 @@ if (sizeof($statusArray)) {
 ?>
      </tr>
 <?php
+    $protected = false;
   }
 ?>
 </table>
 <?php } ?>
 
-<hr />
+<hr>
 <div id="myAccountShipInfo" class="floatingBox back">
 <?php
   if (!empty($order->delivery['format_id'])) {
 ?>
 <h3><?php echo HEADING_DELIVERY_ADDRESS; ?></h3>
-<address><?php echo zen_address_format($order->delivery['format_id'], $order->delivery, 1, ' ', '<br />'); ?></address>
+<address><?php echo zen_address_format($order->delivery['format_id'], $order->delivery, 1, ' ', '<br>'); ?></address>
 <?php
   }
 ?>
 
 <?php
-    if (zen_not_null($order->info['shipping_method'])) {
+    if (!empty($order->info['shipping_method'])) {
 ?>
 <h4><?php echo HEADING_SHIPPING_METHOD; ?></h4>
 <div><?php echo $order->info['shipping_method']; ?></div>
-<?php } else { // temporary just remove these 4 lines ?>
-<div>WARNING: Missing Shipping Information</div>
+<?php } else { ?>
+<div><?php echo TEXT_MISSING_SHIPPING_INFO; ?></div>
 <?php
     }
 ?>
@@ -171,10 +194,10 @@ if (sizeof($statusArray)) {
 
 <div id="myAccountPaymentInfo" class="floatingBox forward">
 <h3><?php echo HEADING_BILLING_ADDRESS; ?></h3>
-<address><?php echo zen_address_format($order->billing['format_id'], $order->billing, 1, ' ', '<br />'); ?></address>
+<address><?php echo zen_address_format($order->billing['format_id'], $order->billing, 1, ' ', '<br>'); ?></address>
 
 <h4><?php echo HEADING_PAYMENT_METHOD; ?></h4>
 <div><?php echo $order->info['payment_method']; ?></div>
 </div>
-<br class="clearBoth" />
+<br class="clearBoth">
 </div>

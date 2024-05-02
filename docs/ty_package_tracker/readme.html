@@ -54,8 +54,8 @@ body {
 
             <h3>Prerequisites</h3>
             <p>This version of <b><em>Ty Package Tracker (TyPT)</em></b> requires:<ol>
-                <li>A working copy of Zen Cart 1.5.7 or later.  If you're using an unsuffixed version of that Zen Cart version, be sure to apply all the known <a href="https://www.zen-cart.com/showthread.php?226872-Known-bugs-(and-fixes)-for-v1-5-7-series" target="_blank">bugfixes</a> for proper operation.  If you're using an older version of Zen Cart, please use the version of <em>Ty Package Tracker</em> that is associated with your Zen Cart's version.</li>
-                <li>The site must use a PHP version greater than or equal to PHP 5.6.</li>
+                <li>A working copy of Zen Cart 1.5.8 or later. If you're using an older version of Zen Cart, please use the version of <em>Ty Package Tracker</em> that is associated with your Zen Cart's version.</li>
+                <li>The site must use a PHP version greater than or equal to PHP 7.4.</li>
                 <li>For integration with <b><em>Edit Orders</em></b>, use v4.5.6 or later of that plugin.</li>
             </ol>
         </header>
@@ -208,7 +208,9 @@ body {
                         <ul>
                             <li>v4.1.0, 2024-05-02 (lat9):<ul>
                                 <li>BUGFIX: Add variable to admin observer; PHP 7.4+ requirement.</li>
+                                <li>CHANGE: Using the zc200 version of the overridden template as the change-basis; supporting zc158 and later.</li>
                                 <li>The following files were changed:<ol>
+                                    <li>/includes/templates/YOUR_TEMPLATE/tpl_account_history_info_default.php</li>
                                     <li>/YOUR_ADMIN/includes/classes/observers/TyPackageTrackerAdminObserver.php</li>
                                     <li>/YOUR_ADMIN/includes/init_includes/init_typt_config.php</li>
                                 </ol></li>
