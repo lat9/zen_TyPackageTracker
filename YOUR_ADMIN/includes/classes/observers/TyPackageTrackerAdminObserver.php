@@ -3,15 +3,17 @@
 // Part of the Ty Package Tracker plugin, v4.0.0 and later.  Provides integration with the
 // admin's Customers :: Orders and Edit Orders display and update of an order's tracking information.
 //
-// Last updated 20210615-lat9 for v4.0.1
+// Last updated 20240502-lat9 for v4.1.0
 //
 if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG !== true) {
     die('Illegal Access');
 }
 
-class TyPackageTrackerAdminObserver extends base 
+class TyPackageTrackerAdminObserver extends base
 {
-    public function __construct() 
+    protected string $eo_field_display;
+
+    public function __construct()
     {
         // -----
         // If the plugin's configuration is set, register for notifications from
@@ -22,7 +24,7 @@ class TyPackageTrackerAdminObserver extends base
             // Always watch for notifications from the core Customers::Orders.
             //
             $this->attach(
-                $this, 
+                $this,
                 [
                     /* From /admin/orders.php (zc157+) */
                     'NOTIFY_ADMIN_ORDERS_STATUS_HISTORY_EXTRA_COLUMN_HEADING',
@@ -30,7 +32,7 @@ class TyPackageTrackerAdminObserver extends base
                     'NOTIFY_ADMIN_ORDERS_ADDL_HISTORY_INPUTS',
                 ]
             );
-            
+
             // -----
             // The 'Edit Orders' integration is a tad complicated.  EO versions
             // prior to v4.6.0-beta1 include TyPT integration when the 'TY_TRACKER' constant
@@ -72,7 +74,7 @@ class TyPackageTrackerAdminObserver extends base
             }
         }
     }
-  
+
     public function update(&$class, $eventID, $p1, &$p2, &$p3, &$p4)
     {
         switch ($eventID) {
@@ -105,7 +107,7 @@ class TyPackageTrackerAdminObserver extends base
                 //
                 $this->detach($this, ['ZEN_UPDATE_ORDERS_HISTORY_PRE_EMAIL']);
                 break;
-                
+
             // -----
             // Issued by zen_update_orders_history during a status-update action, just
             // after writing the 'base' status-history record to the database.
@@ -233,7 +235,7 @@ class TyPackageTrackerAdminObserver extends base
                 break;
         }
     }
-    
+
     // -----
     // A helper function, called by the typt_eo_display_field function, present in
     // /admin/includes/functions/ty_package_tracker_functions.php.
