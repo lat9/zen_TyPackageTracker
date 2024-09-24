@@ -2,7 +2,7 @@
 // -----
 // Part of the Ty Package Tracker plugin, v4.0.0 and later.
 //
-// Last updated 20210301-lat9 for v4.0.0
+// Last updated: v5.0.0
 //
 /*
  * This file is derived from order_history.php
@@ -33,7 +33,7 @@ if (zen_is_logged_in() && !zen_in_guest_checkout()) {
         foreach ($orders_history as $track_history) {
             $track_orders[] = $track_history;
         }
-        
+
         require $template->get_template_dir('tpl_track_orders.php', DIR_WS_TEMPLATE, $current_page_base, 'sideboxes') . '/tpl_track_orders.php';
         $title =  BOX_HEADING_TRACK_ORDERS;
         $title_link = false;

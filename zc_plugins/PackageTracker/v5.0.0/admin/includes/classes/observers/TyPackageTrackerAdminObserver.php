@@ -3,7 +3,7 @@
 // Part of the Ty Package Tracker plugin, v4.0.0 and later.  Provides integration with the
 // admin's Customers :: Orders and Edit Orders display and update of an order's tracking information.
 //
-// Last updated 20240502-lat9 for v4.1.0
+// Last updated: v5.0.0
 //
 if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG !== true) {
     die('Illegal Access');
@@ -11,68 +11,21 @@ if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG !== true) {
 
 class TyPackageTrackerAdminObserver extends base
 {
-    protected string $eo_field_display;
-
     public function __construct()
     {
-        // -----
-        // If the plugin's configuration is set, register for notifications from
-        // various admin elements associated with an order's status-history updates.
-        //
-        if (defined('TY_TRACKER_VERSION')) {
-            // -----
-            // Always watch for notifications from the core Customers::Orders.
-            //
-            $this->attach(
-                $this,
-                [
-                    /* From /admin/orders.php (zc157+) */
-                    'NOTIFY_ADMIN_ORDERS_STATUS_HISTORY_EXTRA_COLUMN_HEADING',
-                    'NOTIFY_ADMIN_ORDERS_STATUS_HISTORY_EXTRA_COLUMN_DATA',
-                    'NOTIFY_ADMIN_ORDERS_ADDL_HISTORY_INPUTS',
-                ]
-            );
+        $this->attach(
+            $this,
+            [
+                /* From /admin/orders.php (zc157+) and EO v5.0.0+ */
+                'NOTIFY_ADMIN_ORDERS_STATUS_HISTORY_EXTRA_COLUMN_HEADING',
+                'NOTIFY_ADMIN_ORDERS_STATUS_HISTORY_EXTRA_COLUMN_DATA',
+                'NOTIFY_ADMIN_ORDERS_ADDL_HISTORY_INPUTS',
 
-            // -----
-            // The 'Edit Orders' integration is a tad complicated.  EO versions
-            // prior to v4.6.0-beta1 include TyPT integration when the 'TY_TRACKER' constant
-            // is defined and set to 'True' and handle the base order-status update directly
-            // rather than using the zen_update_orders_history function.  v4.4.0 and later of EO
-            // use that function to add the EO-specific, hidden comment to identify what changes
-            // were performed.
-            //
-            // Thus, we'll register for notifications from the zen_update_orders_history function
-            // UNLESS the request comes during EO operations and the EO version is less than 4.6.0-beta1.
-            //
-            $is_eo_access = (defined('FILENAME_EDIT_ORDERS') && $GLOBALS['current_page'] == (FILENAME_EDIT_ORDERS . '.php'));
-            $eo_supports_typt_notifications = (defined('EO_VERSION') && version_compare(EO_VERSION, '4.6.0-beta1', '>='));
-            if (!$is_eo_access || $eo_supports_typt_notifications) {
-                $this->attach(
-                    $this,
-                    [
-                        /* From /includes/functions/functions_osh_update.php */
-                        'ZEN_UPDATE_ORDERS_HISTORY_PRE_EMAIL',
-                        'ZEN_UPDATE_ORDERS_HISTORY_BEFORE_INSERT',
-                    ]
-                );
-            }
-
-            // -----
-            // If the plugin is configured to also inject its form-fields and updates
-            // for the 'Edit Orders' display and the EO version supports the required
-            // notifications for TyPT, monitor for the EO-related notifications as well.
-            //
-            if (TY_TRACKER === 'False' && $is_eo_access && $eo_supports_typt_notifications) {
-                $this->attach(
-                    $this,
-                    [
-                        /* From /admin/edit_orders.php */
-                        'EDIT_ORDERS_STATUS_DISPLAY_ARRAY_INIT',
-                        'EDIT_ORDERS_ADDITIONAL_OSH_CONTENT',
-                    ]
-                );
-            }
-        }
+                /* From /includes/functions/functions_osh_update.php */
+                'ZEN_UPDATE_ORDERS_HISTORY_PRE_EMAIL',
+                'ZEN_UPDATE_ORDERS_HISTORY_BEFORE_INSERT',
+            ]
+        );
     }
 
     public function update(&$class, $eventID, $p1, &$p2, &$p3, &$p4)
@@ -182,92 +135,40 @@ class TyPackageTrackerAdminObserver extends base
 
             // -----
             // Issued by /admin/orders.php to request any additional status-history form elements
-            // to display.  We'll load the tracking-information input form.
+            // to display.  We'll directly output the tracking-additions' form.
             //
             case 'NOTIFY_ADMIN_ORDERS_ADDL_HISTORY_INPUTS':
-                require DIR_WS_MODULES . 'ty_package_tracker/tpl_package_tracker_form.php';
-                break;
+                global $current_page;
 
-            // -----
-            // Issued by /admin/edit_orders.php, just prior to the display of the order's current
-            // status-history table.  We'll inject the information, letting EO know how to display the
-            // fields associated with Ty Package Tracker in the order's status-history table.
-            //
-            // On entry:
-            //
-            // $p1 ... (r/o) The orders_id being processed.
-            // $p2 ... (r/w) An array describing the fields to be displayed in the table and how
-            //               they're to be displayed.
-            //
-            case 'EDIT_ORDERS_STATUS_DISPLAY_ARRAY_INIT':
-                require DIR_WS_FUNCTIONS . 'ty_package_tracker_functions.php';
-                $field_data = [
-                    'title' => '',
-                    'show_function' => 'typt_eo_display_field',
-                    'include_field_name' => true,
-                ];
-                $table_elements = [];
-                foreach ($p2 as $key => $values) {
-                    $table_elements[$key] = $values;
-                    if ($key == 'orders_status_id') {
-                        for ($i = 1; $i <= 5; $i++) {
-                            if ($i == 5) {
-                                $field_data['title'] = TABLE_HEADING_TRACKING_ID;
-                            }
-                            $table_elements["track_id$i"] = $field_data;
-                        }
-                    }
+                if ($current_page === 'edit_orders.php') {
+                    $label_class = 'control-label';
+                    $input_class = '';
+                } else {
+                    $label_class = 'col-sm-3 control-label';
+                    $input_class = 'class="col-sm-9"';
                 }
-                $p2 = $table_elements;
-                break;
-
-            // -----
-            // Issued by /admin/edit_orders.php, within the status-update form just after the text-area
-            // comments block.  We'll add the TyPT form fields to the display.
-            //
-            case 'EDIT_ORDERS_ADDITIONAL_OSH_CONTENT':
-                ob_start();
-                require DIR_WS_MODULES . 'ty_package_tracker/tpl_package_tracker_eo_form.php';
-                $p2[] = ob_get_clean();
+                for ($i = 1; $i <= 5; $i++) {
+                    $carrier_status = "CARRIER_STATUS_$i";
+                    $carrier_name = "CARRIER_NAME_$i";
+                    if (defined($carrier_status) && defined($carrier_name)) {
+                        if (constant($carrier_status) === 'True') { 
+?>
+<div class="form-group">
+    <label for="track-id-<?= $i ?>" class="<?= $label_class ?>">
+        <?= ENTRY_ADD_TRACK . ' (' . constant($carrier_name) . ')' ?>
+    </label>
+    <div <?= $input_class ?>>
+        <?= zen_draw_input_field("track_id$i", '', 'id="track-id-' . $i . '" class="form-control"') ?>
+    </div>
+</div>
+<?php
+                        }
+                    } 
+                } 
                 break;
  
             default:
                 break;
         }
-    }
-
-    // -----
-    // A helper function, called by the typt_eo_display_field function, present in
-    // /admin/includes/functions/ty_package_tracker_functions.php.
-    //
-    public function buildEoTrackDisplay($field_value, $field_name)
-    {
-        switch ($field_name) {
-            case 'track_id1':
-                $ty = '1';
-                $this->eo_field_display = '';
-                break;
-            case 'track_id2':
-                $ty = '2';
-                break;
-            case 'track_id3':
-                $ty = '3';
-                break;
-            case 'track_id4':
-                $ty = '4';
-                break;
-            case 'track_id5':
-                $ty = '5';
-                break;
-            default:
-                trigger_error("Unknown field name ($field_name) supplied.", E_USER_ERROR);
-                exit();
-                break;
-        }
-        if (!empty($field_value)) {
-            $track_id = nl2br(zen_output_string_protected($field_value));
-            $this->eo_field_display .= (constant("CARRIER_NAME_$ty") . ': <a href="' . constant("CARRIER_LINK_$ty") . $track_id . '" target="_blank" rel="noreferrer noopener">' . $track_id . '</a>&nbsp;');
-        }
-        return $this->eo_field_display;
     }
 }

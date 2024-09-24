@@ -3,15 +3,8 @@
 // Part of the Ty Package Tracker plugin, v4.0.0 and later.  Gathers the various tracking-ids for display
 // on the account_history_info page.
 //
-// Last updated 20210301-lat9 for v4.0.0
+// Last updated: v5.0.0
 //
-
-// -----
-// If not configured in the admin, nothing more to do here.
-//
-if (!defined('TY_TRACKER_VERSION')) {
-    return;
-}
 
 // -----
 // Gather the tracking ids for the current order, using the same sort-order as the base
