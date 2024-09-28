@@ -4,8 +4,8 @@
   <title>Ty Package Tracker</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
-<style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+  <style>
 .nav-pills-custom .nav-link {
     color: #aaa;
     background: #fff;
@@ -37,15 +37,15 @@ body {
     min-height: 100vh;
     background: radial-gradient(ellipse at center, rgba(240,249,255,1) 0%,rgba(203,235,255,1) 47%,rgba(161,219,255,1) 100%);
 }
-</style>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+  </style>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
 </head>
 <body>
 <section class="py-5 header">
     <div class="container py-4">
         <header class="pb-2">
-            <h1 class="display-4 text-center">Ty Package Tracker v4.1.0</h1>
+            <h1 class="display-4 text-center">Ty Package Tracker v5.0.0</h1>
             <ul>
                 <li>Zen Cart download link: <a href="https://www.zen-cart.com/downloads.php?do=file&id=75" target="_blank">https://www.zen-cart.com/downloads.php?do=file&id=75</a></li>
                 <li>Zen Cart support thread: <a href="https://www.zen-cart.com/forum/showthread.php?t=36126" target="_blank">https://www.zen-cart.com/forum/showthread.php?t=36126</a></li>
@@ -54,9 +54,9 @@ body {
 
             <h3>Prerequisites</h3>
             <p>This version of <b><em>Ty Package Tracker (TyPT)</em></b> requires:<ol>
-                <li>A working copy of Zen Cart 1.5.8 or later. If you're using an older version of Zen Cart, please use the version of <em>Ty Package Tracker</em> that is associated with your Zen Cart's version.</li>
-                <li>The site must use a PHP version greater than or equal to PHP 7.4.</li>
-                <li>For integration with <b><em>Edit Orders</em></b>, use v4.5.6 or later of that plugin.</li>
+                <li>A working copy of Zen Cart 2.1.0 or later. If you're using an older version of Zen Cart, please use the version of <em>Ty Package Tracker</em> that is associated with your Zen Cart's version.</li>
+                <li>The site must use a PHP version greater than or equal to PHP 8.0.</li>
+                <li>For integration with <b><em>Edit Orders</em></b>, use v5.0.0 or later of that plugin.</li>
             </ol>
         </header>
 
@@ -99,16 +99,14 @@ body {
 
                     <div class="tab-pane fade shadow rounded bg-white p-4" id="v-pills-2" role="tabpanel" aria-labelledby="v-pills-2-tab">
                         <h4 class="font-italic mb-4">Installation</h4>
-                        <p>The installation steps for v4.0.0 and later of <em>Ty Package Tracker</em> are significantly simpler than those for prior versions of the plugin.  There are no longer any <span style="color: red;">core-file</span> edits required and there's only one (1) template-override file!</p>
-                        <p>With this simplification, the upgrade from prior versions is a bit more complex, as the <span style="color: red;">core-file</span> changes must be backed-out and now-redundant files individually removed.  See <a href="https://github.com/lat9/zen_TyPackageTracker/blob/master/pages/Upgrading_to_400.md" target="_blank">this</a> on-line documentation in the plugin's GitHub repository for additional information.</p>
+                        <p>The installation steps for v5.0.0 and later of <em>Ty Package Tracker</em> are much simpler than those for prior versions of the plugin, since the plugin is now <code>encapsulated</code>.  There are no longer any <span style="color: red;">core-file</span> or template-override edits required!</p>
+                        <p>With this simplification, the upgrade from prior versions is a bit more complex, as the <span style="color: red;">core-file</span> and template changes must be backed-out and now-redundant files individually removed.  See <a href="https://github.com/lat9/zen_TyPackageTracker/wiki/Upgrading-to-v5.0.0-(or-later)-from-a-version-prior-to-5.0.0" target="_blank">this</a> GitHub Wiki article for additional information.</p>
                         <ol>
-                            <li>Start by backing-up your site's database and file-system.</li>
-                            <li>If you are upgrading from a version <em>prior to</em> v4.0.0, follow the steps outlined by the link above to remove prior changes to Zen Cart core-files and remove now-redundant files from those prior <em>TyPT</em> versions.</li>
                             <li>Unzip the plugin's zip-file distribution.</li>
-                            <li>If your store's active template includes changes to <code>/templates/tpl_account_history_info_default.php</code>, you'll need to merge the <em>TyPT</em> changes provided in the distribution's <code>/includes/templates/YOUR_TEMPLATE/templates/tpl_account_history_info_default.php</code> with that pre-existing file.  Otherwise, copy that distributed file to your current template's <code>/templates</code> sub-directory.</li>
-                            <li>Copy all files from the distribution's <code>/YOUR_ADMIN</code> sub-directory to your site's admin sub-directory.</li>
-                            <li>Copy all files from the distribution's <code>/includes</code> sub-directory (other than <code>/includes/templates/YOUR_TEMPLATE</code>) to your site's <code>/includes</code> sub-directory.</li>
-                            <li>Log into your Zen Cart admin to cause the plugin's installation script to run, then refer to this readme's <b><em>How to Use</em></b> tab to configure the plugin for your use.</li>
+                            <li>Copy the contents for the distribution's <code>zc_plugins</code> directory to your site's <code>/zc_plugins</code> directory.</b> 
+                            <li>Log into your Zen Cart admin and navigate to <b>Modules :: Plugin Manager</b>.</li>
+                            <li>You'll see a plugin named <b>Ty Package Tracker</b>. Click on the associated <code>Install</code> button, confirm the installation and you're finished!</li>
+                            <li>Now that the plugin's installed, refer to this readme's <b><em>How to Use</em></b> tab to configure the plugin for your use.</li>
                         </ol>
                         <div class="card mt-3">
                             <div class="card-header text-center bg-secondary text-white">Database Modifications</div>
@@ -124,7 +122,11 @@ body {
                          <div class="card mt-3">
                             <div class="card-header text-center bg-secondary text-white">Uninstalling the Plugin</div>
                             <div class="card-body">
-                                <p>To uninstall the plugin, start by removing the additional files added (see the <b><em>Files</em></b> tab for additional information) and then use the distribution's <code>/docs/ty_package_tracker/ty_package_tracker_uninstall.sql</code> to remove the plugin's additions to your database.</p>
+                                <p>To uninstall the plugin:</p>
+                                <ol>
+                                    <li>Log into your Zen Cart admin  and navigate to <b>Modules :: Plugin Manager</b>.</li>
+                                    <li>Locate the entry for <b>Ty Package Tracker</b>, click the associated <code>Un-Install</code> button, confirm the removal and you've removed the plugin.</li>
+                                </ol>
                             </div>
                         </div>
                     </div>
@@ -145,10 +147,6 @@ body {
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>Current Ty Package Tracker Version</td>
-                                            <td>Displays the current version of the plugin</td>
-                                        </tr>
-                                        <tr>
                                             <td colspan="2" class="text-center">The following three (3) settings are provided for Carriers 1 through 5.</td>
                                         </tr>
                                         <tr>
@@ -166,10 +164,6 @@ body {
                                         <tr>
                                             <td>Max display for Track Order sidebox</td>
                                             <td>Identifies the maximum number of orders to display in the <em>Track Orders</em> sidebox; default: 3.</td>
-                                        </tr>
-                                        <tr>
-                                            <td><em>Edit Orders</em> Mode</td>
-                                            <td>This <code>True/False</code> switch controls how <em>TyPT</em> integrates with <em>Edit Orders</em>. Versions prior to v4.6.0 include the package-tracker handling, but follow-on versions do not.  Set this value to <em>True</em> for EO versions &lt; 4.6.0 and <em>False</em> (the default) for EO versions &gt;= 4.6.0, if you want the <em>TyPT</em> changes to apply to the <em>Edit Orders</em> tool.</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -206,6 +200,10 @@ body {
                         <h4 class="font-italic mb-4">Credits and History</h4>
                         <p>Based on Ty Package Tracker v2.3a by Ty Lieu (original author)</p>
                         <ul>
+                            <li>v5.0.0-beta1, 2024-09-27 (lat9):<ul>
+                                <li>CHANGE: Now released as a Zen Cart <code>encapsulated</code> plugin.</li>
+                                <li>This release migrates the previous version's files into the encapsulated structure; consider that everything has changed.</li>
+                            </ul>
                             <li>v4.1.0, 2024-05-02 (lat9):<ul>
                                 <li>BUGFIX: Add variable to admin observer; PHP 7.4+ requirement.</li>
                                 <li>CHANGE: Using the zc200 version of the overridden template as the change-basis; supporting zc158 and later.</li>
@@ -306,21 +304,17 @@ body {
 
                     <div class="tab-pane fade shadow rounded bg-white p-4" id="v-pills-5" role="tabpanel" aria-labelledby="v-pills-4-tab">
                         <h4 class="font-italic mb-4">Files</h4>
-                        <p>The following files are provided in the <em>TyPT</em> distribution:</p>
+                        <p>The following files are provided in the <em>TyPT</em> distribution, <code>/zc_plugins/PackageTracker/xxx/</code>, where <code>xxx</code> is the released version:</p>
                         <ol>
-                            <li>/includes/languages/english/extra_definitions/ty_package_tracker_definitions.php</li>
-                            <li>/includes/modules/pages/account_history_info/header_php_typt.php</li>
-                            <li>/includes/modules/sideboxes/track_orders.php</li>
-                            <li>/includes/templates/template_default/sideboxes/tpl_track_orders.php</li>
-                            <li>/includes/templates/YOUR_TEMPLATE/templates/tpl_account_history_info_default.php</li>
-                            <li>/YOUR_ADMIN/images/icon_track_add.png</li>
-                            <li>/YOUR_ADMIN/includes/auto_loaders/config.typt.php</li>
-                            <li>/YOUR_ADMIN/includes/classes/observers/TyPackageTrackerAdminObserver.php</li>
-                            <li>/YOUR_ADMIN/includes/functions/ty_package_tracker_functions.php</li>
-                            <li>/YOUR_ADMIN/includes/init_includes/init_typt_config.php</li>
-                            <li>/YOUR_ADMIN/includes/languages/english/extra_definitions/ty_package_tracker_admin_definitions.php</li>
-                            <li>/YOUR_ADMIN/includes/modules/ty_package_tracker/tpl_package_tracker_eo_form.php</li>
-                            <li>/YOUR_ADMIN/includes/modules/ty_package_tracker/tpl_package_tracker_form.php</li>
+                            <li>admin/includes/classes/observers/auto.ty_package_tracker_admin.php</li>
+                            <li>admin/includes/languages/english/extra_definitions/lang.ty_package_tracker_admin_definitions.php</li>
+                            <li>catalog/includes/classes/observers/auto.ty_package_tracker.php</li>
+                            <li>catalog/includes/languages/english/extra_definitions/lang.ty_package_tracker_definitions.php</li>
+                            <li>catalog/includes/modules/sideboxes/track_orders.php</li>
+                            <li>catalog/includes/templates/default/sideboxes/tpl_track_orders.php</li>
+                            <li>Installer/languages/english/main.php</li>
+                            <li>Installer/ScriptedInstaller.php</li>
+                            <li>manifest.php</li>
                         </ol>
                     </div>
 
