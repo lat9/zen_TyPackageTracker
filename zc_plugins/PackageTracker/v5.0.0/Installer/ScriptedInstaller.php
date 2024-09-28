@@ -3,7 +3,7 @@
 // Admin-level installation script for the "encapsulated" Ty Package Tracker plugin for Zen Cart, by lat9.
 // Copyright (C) 2018-2024, Vinos de Frutas Tropicales.
 //
-// Last updated: v5.0.0
+// Last updated: v5.0.0 (new)
 //
 use Zencart\PluginSupport\ScriptedInstaller as ScriptedInstallBase;
 
@@ -113,13 +113,11 @@ class ScriptedInstaller extends ScriptedInstallBase
             'configTyPackageTracker',
         ]);
 
-        $this->deleteConfigGroupId($this->configGroupTitle, true);
+        $this->deleteConfigurationGroup($this->configGroupTitle, true);
     }
 
     protected function nonEncapsulatedVersionPresent(): bool
     {
-        return false;
-        
         $log_messages = [];
 
         $file_found_message = 'Non-encapsulated admin file (%s) must be removed before this plugin can be installed.';
@@ -130,14 +128,21 @@ class ScriptedInstaller extends ScriptedInstallBase
             'includes/classes/' => [
                 'observers/TyPackageTrackerAdminObserver.php',
             ],
+            'includes/extra_datafiles/' => [
+                'tracker.php',
+                'typackage_defines.php',
+                'typackage_filenames.php',
+            ],
             'includes/functions/' => [
+                'extra_functions/common_orders_functions.php',
                 'ty_package_tracker_functions.php',
             ],
             'includes/init_includes/' => [
                 'init_typt_config.php',
             ],
-            'includes/languages/english/extra_definitions/' => [
-                'ty_package_tracker_admin_definitions.php',
+            'includes/languages/english/' => [
+                'tracker.php',
+                'extra_definitions/ty_package_tracker_admin_definitions.php',
             ],
             'includes/modules/ty_package_tracker/' => [
                 'tpl_package_tracker_eo_form.php',
@@ -153,8 +158,36 @@ class ScriptedInstaller extends ScriptedInstallBase
             }
         }
 
+        $file_found_message = 'Non-encapsulated storefront file (%s) must be removed before this plugin can be installed.';
+        $files_to_check = [
+            'includes/extra_datafiles/' => [
+                'track_orders.php',
+            ],
+            'includes/languages/english/' => [
+                'tracker.php',
+                'extra_definitions/track_order.php',
+                'extra_definitions/ty_package_tracker_definitions.php',
+            ],
+            'includes/modules/' => [
+                'pages/tracker/header_php.php',
+                'pages/account_history_info/header_php_typt.php',
+                'sideboxes/track_orders.php',
+            ],
+            'includes/templates/template_default/' => [
+                'sideboxes/tpl_track_orders.php',
+            ],
+        ];
+        foreach ($files_to_check as $dir => $files) {
+            $current_dir = DIR_FS_CATALOG . $dir;
+            foreach ($files as $next_file) {
+                if (file_exists($current_dir . $next_file)) {
+                    $log_messages[] = sprintf($file_found_message, $dir . $next_file);
+                }
+            }
+        }
+
         if (count($log_messages) !== 0) {
-            trigger_error(implode("\n", $log_messages), E_USER_NOTICE);
+            error_log(implode("\n", $log_messages), 3, DIR_FS_LOGS . '/myDEBUG-adm-typt-installation-error-' . date('Ymd-His') . '.log');
             return true;
         }
         return false;
