@@ -28,7 +28,7 @@ class zcObserverTyPackageTracker
         );
     }
 
-    public function notify_account_history_info_osh_headings(&$class, string $e, array $x, array &$extra_headings): void
+    public function notify_account_history_info_osh_headings(&$class, string $e, $x, array &$extra_headings): void
     {
         $extra_headings[] = TABLE_HEADING_TRACKING_ID;
     }
