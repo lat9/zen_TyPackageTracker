@@ -202,7 +202,7 @@ class ScriptedInstaller extends ScriptedInstallBase
             "DELETE FROM " . TABLE_CONFIGURATION . "
               WHERE configuration_key IN (
                 'TY_TRACKER',
-                'TY_TRACKER_VERSION',
+                'TY_TRACKER_VERSION'
               )"
         );
     }
