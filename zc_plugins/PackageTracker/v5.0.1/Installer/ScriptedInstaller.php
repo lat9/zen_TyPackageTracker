@@ -34,19 +34,19 @@ class ScriptedInstaller extends ScriptedInstallBase
 
                 ('Package Tracking - Carrier 1 Name', 'CARRIER_NAME_1', 'FedEx', 'Enter name of Carrier 1<br><br><strong>Example:</strong> FedEx, UPS, Canada Post, etc...<br>(default: FedEx)', $cgi, 95,  now(), NULL, NULL),
 
-                ('Package Tracking - Carrier 1 Tracking Link', 'CARRIER_LINK_1', 'https://www.fedex.com/Tracking?action=track&tracknumbers=', 'Enter the tracking link of Carrier 1<br> <br><strong>Example:</strong> https://www.fedex.com/Tracking?action=track&tracknumbers=', $cgi, 100, now(), NULL, NULL),
+                ('Package Tracking - Carrier 1 Tracking Link', 'CARRIER_LINK_1', 'https://www.fedex.com/Tracking?action=track&tracknumbers=', 'Enter the tracking link of Carrier 1<br><br><strong>Example:</strong> https://www.fedex.com/Tracking?action=track&tracknumbers=', $cgi, 100, now(), NULL, NULL),
 
                 ('Package Tracking - Carrier 2 Status', 'CARRIER_STATUS_2', 'True', 'Enable Tracking for Carrier 2<br><br>Set to false if you do NOT want Carrier 2 to be displayed on Admin and Customer page.', $cgi, 105, now(), NULL, 'zen_cfg_select_option([\'True\', \'False\'],'),
 
-                ('Package Tracking - Carrier 2 Name', 'CARRIER_NAME_2', 'UPS', 'Enter name of Carrier 1<br><br><strong>Example:</strong> FedEx, UPS, Canada Post, etc...<br>(default: UPS)', $cgi, 110,  now(), NULL, NULL),
+                ('Package Tracking - Carrier 2 Name', 'CARRIER_NAME_2', 'UPS', 'Enter name of Carrier 2<br><br><strong>Example:</strong> FedEx, UPS, Canada Post, etc...<br>(default: UPS)', $cgi, 110,  now(), NULL, NULL),
 
-                ('Package Tracking - Carrier 2 Tracking Link', 'CARRIER_LINK_2', 'https://wwwapps.ups.com/WebTracking/processInputRequest?sort_by=status&tracknums_displayed=1&TypeOfInquiryNumber=T&loc=en_US&InquiryNumber1=', 'Enter the tracking link of Carrier 2<br> <br><strong>Example:</strong> https://www.fedex.com/Tracking?action=track&tracknumbers=', $cgi, 115, now(), NULL, NULL),
+                ('Package Tracking - Carrier 2 Tracking Link', 'CARRIER_LINK_2', 'https://wwwapps.ups.com/WebTracking/processInputRequest?sort_by=status&tracknums_displayed=1&TypeOfInquiryNumber=T&loc=en_US&InquiryNumber1=', 'Enter the tracking link of Carrier 2<br><br><strong>Example:</strong> https://www.fedex.com/Tracking?action=track&tracknumbers=', $cgi, 115, now(), NULL, NULL),
 
                 ('Package Tracking - Carrier 3 Status', 'CARRIER_STATUS_3', 'True', 'Enable Tracking for Carrier 3<br><br>Set to false if you do NOT want Carrier 3 to be displayed on Admin and Customer page.', $cgi, 120, now(), NULL, 'zen_cfg_select_option([\'True\', \'False\'],'),
 
                 ('Package Tracking - Carrier 3 Name', 'CARRIER_NAME_3', 'USPS', 'Enter name of Carrier 3<br><br><strong>Example:</strong> FedEx, UPS, Canada Post, etc...<br>(default: USPS)', $cgi, 125,  now(), NULL, NULL),
 
-                ('Package Tracking - Carrier 3 Tracking Link', 'CARRIER_LINK_3', 'https://tools.usps.com/go/TrackConfirmAction!input.action?tLabels=', 'Enter the tracking link of Carrier 3<br> <br><strong>Example:</strong> https://www.fedex.com/Tracking?action=track&tracknumbers=', $cgi, 130, now(), NULL, NULL),
+                ('Package Tracking - Carrier 3 Tracking Link', 'CARRIER_LINK_3', 'https://tools.usps.com/go/TrackConfirmAction!input.action?tLabels=', 'Enter the tracking link of Carrier 3<br><br><strong>Example:</strong> https://www.fedex.com/Tracking?action=track&tracknumbers=', $cgi, 130, now(), NULL, NULL),
 
                 ('Package Tracking - Carrier 4 Status', 'CARRIER_STATUS_4', 'False', 'Enable Tracking for Carrier 4<br><br>Set to false if you do NOT want Carrier 4 to be displayed on Admin and Customer page.', $cgi, 140, now(), NULL, 'zen_cfg_select_option([\'True\', \'False\'],'),
 
