@@ -1,6 +1,6 @@
 Ty Package Tracker for Zen Cart
 =======
-## Current Version: 5.0.0
+## Current Version: 5.0.1
 
 - _**Download from Zen Cart**_: https://www.zen-cart.com/downloads.php?do=file&id=75
 - _**Zen Cart Support Thread**_: https://www.zen-cart.com/showthread.php?36126-Track-Package-from-FedEx-UPS-Postal-DHL-etc
