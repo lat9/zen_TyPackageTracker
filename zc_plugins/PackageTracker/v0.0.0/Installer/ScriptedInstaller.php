@@ -48,17 +48,17 @@ class ScriptedInstaller extends ScriptedInstallBase
 
                 ('Package Tracking - Carrier 3 Tracking Link', 'CARRIER_LINK_3', 'https://tools.usps.com/go/TrackConfirmAction!input.action?tLabels=', 'Enter the tracking link of Carrier 3<br><br><strong>Example:</strong> https://www.fedex.com/Tracking?action=track&tracknumbers=', $cgi, 130, now(), NULL, NULL),
 
-                ('Package Tracking - Carrier 4 Status', 'CARRIER_STATUS_4', 'False', 'Enable Tracking for Carrier 4<br><br>Set to false if you do NOT want Carrier 4 to be displayed on Admin and Customer page.', $cgi, 140, now(), NULL, 'zen_cfg_select_option([\'True\', \'False\'],'),
+                ('Package Tracking - Carrier 4 Status', 'CARRIER_STATUS_4', 'False', 'Enable Tracking for Carrier 4<br><br>Set to false if you do NOT want Carrier 4 to be displayed on Admin and Customer page.', $cgi, 135, now(), NULL, 'zen_cfg_select_option([\'True\', \'False\'],'),
 
-                ('Package Tracking - Carrier 4 Name', 'CARRIER_NAME_4', '', 'Enter name of Carrier 4<br><br><strong>Example:</strong> FedEx, UPS, Canada Post, etc...<br>(default: blank)', $cgi, 145,  now(), NULL, NULL),
+                ('Package Tracking - Carrier 4 Name', 'CARRIER_NAME_4', '', 'Enter name of Carrier 4<br><br><strong>Example:</strong> FedEx, UPS, Canada Post, etc...<br>(default: blank)', $cgi, 140,  now(), NULL, NULL),
 
-                ('Package Tracking - Carrier 4 Tracking Link', 'CARRIER_LINK_4', '', 'Enter the tracking link of Carrier 4<br><br><strong>Example:</strong> https://www.fedex.com/Tracking?action=track&tracknumbers=', $cgi, 150, now(), NULL, NULL),
+                ('Package Tracking - Carrier 4 Tracking Link', 'CARRIER_LINK_4', '', 'Enter the tracking link of Carrier 4<br><br><strong>Example:</strong> https://www.fedex.com/Tracking?action=track&tracknumbers=', $cgi, 145, now(), NULL, NULL),
 
-                ('Package Tracking - Carrier 5 Status', 'CARRIER_STATUS_5', 'False', 'Enable Tracking for Carrier 5<br><br>Set to false if you do NOT want Carrier 5 to be displayed on Admin and Customer page.', $cgi, 166, now(), NULL, 'zen_cfg_select_option([\'True\', \'False\'],'),
+                ('Package Tracking - Carrier 5 Status', 'CARRIER_STATUS_5', 'False', 'Enable Tracking for Carrier 5<br><br>Set to false if you do NOT want Carrier 5 to be displayed on Admin and Customer page.', $cgi, 150, now(), NULL, 'zen_cfg_select_option([\'True\', \'False\'],'),
 
-                ('Package Tracking - Carrier 5 Name', 'CARRIER_NAME_5', '', 'Enter name of Carrier 5<br><br><strong>Example:</strong> FedEx, UPS, Canada Post, etc...<br>(default: blank)', $cgi, 160,  now(), NULL, NULL),
+                ('Package Tracking - Carrier 5 Name', 'CARRIER_NAME_5', '', 'Enter name of Carrier 5<br><br><strong>Example:</strong> FedEx, UPS, Canada Post, etc...<br>(default: blank)', $cgi, 155,  now(), NULL, NULL),
 
-                ('Package Tracking - Carrier 5 Tracking Link', 'CARRIER_LINK_5', '', 'Enter the tracking link of Carrier 5<br><br><strong>Example:</strong> https://www.fedex.com/Tracking?action=track&tracknumbers=', $cgi, 165, now(), NULL, NULL),
+                ('Package Tracking - Carrier 5 Tracking Link', 'CARRIER_LINK_5', '', 'Enter the tracking link of Carrier 5<br><br><strong>Example:</strong> https://www.fedex.com/Tracking?action=track&tracknumbers=', $cgi, 160, now(), NULL, NULL),
 
                 ('Max display for Track Order sidebox', 'MAX_DISPLAY_PRODUCTS_IN_TRACK_ORDERS_BOX', '3', 'The maximum number of orders to display on the Track Order sidebox.', $cgi, 170, now(), NULL, NULL)";
         $this->executeInstallerSql($sql);
