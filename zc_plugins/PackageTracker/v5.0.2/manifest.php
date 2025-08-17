@@ -1,6 +1,6 @@
 <?php
 return [
-    'pluginVersion' => 'v5.0.1',
+    'pluginVersion' => 'v5.0.2',
     'pluginName' => 'Ty Package Tracker',
     'pluginDescription' => 'This plugin adds the ability for your customers and admin to track packages from different carriers. See the plugin\'s <a href="https://github.com/lat9/zen_TyPackageTracker/wiki" target="_blank" rel="noopener noreferrer">Wiki</a> for additional information.',
     'pluginAuthor' => 'Vinos de Frutas Tropicales (lat9)',
