@@ -45,7 +45,7 @@ body {
 <section class="py-5 header">
     <div class="container py-4">
         <header class="pb-2">
-            <h1 class="display-4 text-center">Ty Package Tracker v5.0.1</h1>
+            <h1 class="display-4 text-center">Ty Package Tracker v5.0.2</h1>
             <ul>
                 <li>Zen Cart download link: <a href="https://www.zen-cart.com/downloads.php?do=file&id=75" target="_blank">https://www.zen-cart.com/downloads.php?do=file&id=75</a></li>
                 <li>Zen Cart support thread: <a href="https://www.zen-cart.com/showthread.php?36126-Track-Package-from-FedEx-UPS-Postal-DHL-etc" target="_blank">https://www.zen-cart.com/showthread.php?36126-Track-Package-from-FedEx-UPS-Postal-DHL-etc</a></li>
@@ -200,14 +200,17 @@ body {
                         <h4 class="font-italic mb-4">Credits and History</h4>
                         <p>Based on Ty Package Tracker v2.3a by Ty Lieu (original author)</p>
                         <ul>
+                            <li>v5.0.2-beta1, 2025-08-17 (lat9, torvista):<ul>
+                                <li>BUGFIX: Corrects configuration settings' sort-orders and adds Canada Post and Royal Mail on initial install.</li>
+                            </ul></li>
                             <li>v5.0.1, 2025-04-13 (lat9, retched, piloujp):<ul>
                                 <li>BUGFIX: Corrects MySQL error when upgrading from previous version.</li>
                                 <li>BUGFIX: Correct misspelling in one of the configuration setting's descriptive text.</li>
-                            </ul>
+                            </ul></li>
                             <li>v5.0.0, 2025-02-11 (lat9):<ul>
                                 <li>CHANGE: Now released as a Zen Cart <code>encapsulated</code> plugin, supporting zc210 and later as well as Edit Orders 5.0.0 and later.</li>
                                 <li>This release migrates the previous version's files into the encapsulated structure; consider that everything has changed.</li>
-                            </ul>
+                            </ul></li>
                             <li>v4.1.0, 2024-05-02 (lat9):<ul>
                                 <li>BUGFIX: Add variable to admin observer; PHP 7.4+ requirement.</li>
                                 <li>CHANGE: Using the zc200 version of the overridden template as the change-basis; supporting zc158 and later.</li>
@@ -216,7 +219,7 @@ body {
                                     <li>/YOUR_ADMIN/includes/classes/observers/TyPackageTrackerAdminObserver.php</li>
                                     <li>/YOUR_ADMIN/includes/init_includes/init_typt_config.php</li>
                                 </ol></li>
-                            </ul>
+                            </ul></li>
                             <li>v4.0.1, 2021-08-24 (lat9):<ul>
                                 <li>BUGFIX: Correcting initial-install issues for some forms of upgrade.</li>
                                 <li>BUGFIX: Correcting malformed link for tracking ID during admin processing.</li>
@@ -224,7 +227,7 @@ body {
                                     <li>/YOUR_ADMIN/includes/classes/observers/TyPackageTrackerAdminObserver.php</li>
                                     <li>/YOUR_ADMIN/includes/init_includes/init_typt_config.php</li>
                                 </ol></li>
-                            </ul>
+                            </ul></li>
                             <li>v4.0.0, 2021-03-04 (lat9):<ul>
                                 <li>Updated for use with Zen Cart 1.5.7 and later &mdash; no more core-file overwrites!</li>
                                 <li>Updated for use with <em>Edit Orders</em>, v4.6.0 and later.  That version of <em>EO</em> no longer imbeds the <em>TyPT</em> changes.</li>
@@ -232,7 +235,7 @@ body {
                                 <li>Moves the files associated with the plugin's <code>track_orders</code> sidebox to the <code>template_default</code> template.</li>
                                 <li>The plugin's admin auto-installer is no longer self-deleting.</li>
                                 <li>The change-basis for the <code>tpl_account_history_info_default.php</code> is the current (as of this writing) version provided by the Zen Cart GitHub repository's <code>v157</code> branch.</li>
-                            </ul>
+                            </ul></li>
                             <li>v3.1.6, 2018-12-27 (jeking):<ul>
                                 <li>Updated for Zen Cart v1.5.6</li>
                                 <li>Removed integration with Super Orders and Edit Orders.</li>

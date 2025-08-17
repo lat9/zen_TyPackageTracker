@@ -1,9 +1,9 @@
 <?php
 // -----
 // Admin-level installation script for the "encapsulated" Ty Package Tracker plugin for Zen Cart, by lat9.
-// Copyright (C) 2018-2024, Vinos de Frutas Tropicales.
+// Copyright (C) 2018-2025, Vinos de Frutas Tropicales.
 //
-// Last updated: v5.0.0 (new)
+// Last updated: v5.0.2
 //
 use Zencart\PluginSupport\ScriptedInstaller as ScriptedInstallBase;
 
@@ -30,31 +30,31 @@ class ScriptedInstaller extends ScriptedInstallBase
             "INSERT IGNORE INTO " . TABLE_CONFIGURATION . "
                 (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added, use_function, set_function)
              VALUES
-                ('Package Tracking - Carrier 1 Status', 'CARRIER_STATUS_1', 'False', 'Enable Tracking for Carrier 1.<br><br>Set to False if you do NOT want Carrier 1 to be displayed on the Admin Order Details page nor the Customer Order Status page.', $cgi, 90, now(), NULL, 'zen_cfg_select_option([\'True\', \'False\'],'),
+                ('Package Tracking - Carrier 1 Status', 'CARRIER_STATUS_1', 'False', 'Enable Tracking for Carrier 1.<br><br>Set to False if you do NOT want Carrier 1 to be displayed on the Admin Order Details or Customer Order Status pages.', $cgi, 90, now(), NULL, 'zen_cfg_select_option([\'True\', \'False\'],'),
 
                 ('Package Tracking - Carrier 1 Name', 'CARRIER_NAME_1', 'FedEx', 'Enter name of Carrier 1.<br><br><strong>Example:</strong> FedEx, UPS, USPS, Canada Post, Royal Mail, etc...<br>(default: FedEx)', $cgi, 95,  now(), NULL, NULL),
 
                 ('Package Tracking - Carrier 1 Tracking Link', 'CARRIER_LINK_1', 'https://www.fedex.com/Tracking?action=track&tracknumbers=', 'Enter the tracking link of Carrier 1<br><br><strong>Example:</strong> https://www.fedex.com/Tracking?action=track&tracknumbers=', $cgi, 100, now(), NULL, NULL),
 
-                ('Package Tracking - Carrier 2 Status', 'CARRIER_STATUS_2', 'False', 'Enable Tracking for Carrier 2.<br><br>Set to False if you do NOT want Carrier 2 to be displayed on the Admin Order Details page nor the Customer Order Status page.', $cgi, 105, now(), NULL, 'zen_cfg_select_option([\'True\', \'False\'],'),
+                ('Package Tracking - Carrier 2 Status', 'CARRIER_STATUS_2', 'False', 'Enable Tracking for Carrier 2.<br><br>Set to False if you do NOT want Carrier 2 to be displayed on the Admin Order Details or Customer Order Status pages.', $cgi, 105, now(), NULL, 'zen_cfg_select_option([\'True\', \'False\'],'),
 
                 ('Package Tracking - Carrier 2 Name', 'CARRIER_NAME_2', 'UPS', 'Enter name of Carrier 2.<br><br><strong>Example:</strong> FedEx, UPS, USPS, Canada Post, Royal Mail, etc...<br>(default: UPS)', $cgi, 110,  now(), NULL, NULL),
 
                 ('Package Tracking - Carrier 2 Tracking Link', 'CARRIER_LINK_2', 'https://wwwapps.ups.com/WebTracking/processInputRequest?sort_by=status&tracknums_displayed=1&TypeOfInquiryNumber=T&loc=en_US&InquiryNumber1=', 'Enter the tracking link of Carrier 2<br><br><strong>Example:</strong> https://www.fedex.com/Tracking?action=track&tracknumbers=', $cgi, 115, now(), NULL, NULL),
 
-                ('Package Tracking - Carrier 3 Status', 'CARRIER_STATUS_3', 'False', 'Enable Tracking for Carrier 3.<br><br>Set to False if you do NOT want Carrier 3 to be displayed on the Admin Order Details page nor the Customer Order Status page.', $cgi, 120, now(), NULL, 'zen_cfg_select_option([\'True\', \'False\'],'),
+                ('Package Tracking - Carrier 3 Status', 'CARRIER_STATUS_3', 'False', 'Enable Tracking for Carrier 3.<br><br>Set to False if you do NOT want Carrier 3 to be displayed oon the Admin Order Details or Customer Order Status pages.', $cgi, 120, now(), NULL, 'zen_cfg_select_option([\'True\', \'False\'],'),
 
                 ('Package Tracking - Carrier 3 Name', 'CARRIER_NAME_3', 'USPS', 'Enter name of Carrier 3.<br><br><strong>Example:</strong> FedEx, UPS, USPS, Canada Post, Royal Mail, etc...<br>(default: USPS)', $cgi, 125,  now(), NULL, NULL),
 
                 ('Package Tracking - Carrier 3 Tracking Link', 'CARRIER_LINK_3', 'https://tools.usps.com/go/TrackConfirmAction!input.action?tLabels=', 'Enter the tracking link of Carrier 3<br><br><strong>Example:</strong> https://www.fedex.com/Tracking?action=track&tracknumbers=', $cgi, 130, now(), NULL, NULL),
 
-                ('Package Tracking - Carrier 4 Status', 'CARRIER_STATUS_4', 'False', 'Enable Tracking for Carrier 4.<br><br>Set to False if you do NOT want Carrier 4 to be displayed on the Admin Order Details page nor the Customer Order Status page.', $cgi, 135, now(), NULL, 'zen_cfg_select_option([\'True\', \'False\'],'),
+                ('Package Tracking - Carrier 4 Status', 'CARRIER_STATUS_4', 'False', 'Enable Tracking for Carrier 4.<br><br>Set to False if you do NOT want Carrier 4 to be displayed on the Admin Order Details or Customer Order Status pages.', $cgi, 135, now(), NULL, 'zen_cfg_select_option([\'True\', \'False\'],'),
 
                 ('Package Tracking - Carrier 4 Name', 'CARRIER_NAME_4', 'Canada Post', 'Enter name of Carrier 4.<br><br><strong>Example:</strong> FedEx, UPS, USPS, Canada Post, Royal Mail, etc...<br>(default: Canada Post)', $cgi, 140,  now(), NULL, NULL),
 
                 ('Package Tracking - Carrier 4 Tracking Link', 'CARRIER_LINK_4', 'https://www.canadapost-postescanada.ca/track-reperage/en#/search?searchFor=', 'Enter the tracking link of Carrier 4.<br><br><strong>Example Canada Post:</strong> https://www.canadapost-postescanada.ca/track-reperage/en#/search?searchFor=', $cgi, 145, now(), NULL, NULL),
 
-                ('Package Tracking - Carrier 5 Status', 'CARRIER_STATUS_5', 'False', 'Enable Tracking for Carrier 5.<br><br>Set to False if you do NOT want Carrier 5 to be displayed on the Admin Order Details page nor the Customer Order Status page.', $cgi, 150, now(), NULL, 'zen_cfg_select_option([\'True\', \'False\'],'),
+                ('Package Tracking - Carrier 5 Status', 'CARRIER_STATUS_5', 'False', 'Enable Tracking for Carrier 5.<br><br>Set to False if you do NOT want Carrier 5 to be displayed on the Admin Order Details or Customer Order Status pages.', $cgi, 150, now(), NULL, 'zen_cfg_select_option([\'True\', \'False\'],'),
 
                 ('Package Tracking - Carrier 5 Name', 'CARRIER_NAME_5', 'Royal Mail', 'Enter name of Carrier 5.<br><br><strong>Example:</strong> FedEx, UPS, USPS, Canada Post, Royal Mail, etc...<br>(default: Royal Mail)', $cgi, 155,  now(), NULL, NULL),
 
