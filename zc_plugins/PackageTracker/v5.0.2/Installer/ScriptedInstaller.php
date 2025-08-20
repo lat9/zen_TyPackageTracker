@@ -105,6 +105,29 @@ class ScriptedInstaller extends ScriptedInstallBase
     //
     protected function executeUpgrade($oldVersion)
     {
+        // -----
+        // v5.0.2:
+        //
+        // - Correct various configuration settings' sort-orders
+        //
+        if (version_compare($oldVersion, 'v5.0.2', '<')) {
+            $sort_order_updates = [
+                'CARRIER_STATUS_4' => 135,
+                'CARRIER_NAME_4' => 140,
+                'CARRIER_LINK_4' => 145,
+                'CARRIER_STATUS_5' => 150,
+                'CARRIER_NAME_5' => 155,
+                'CARRIER_LINK_5' => 160,
+            ];
+            foreach ($sort_order_updates as $key => $value) {
+                $this->executeInstallerSql(
+                    "UPDATE " . TABLE_CONFIGURATION . "
+                        SET sort_order = $value
+                      WHERE configuration_key = '$key'
+                      LIMIT 1"
+                );
+            }
+        }
     }
 
     protected function executeUninstall()
