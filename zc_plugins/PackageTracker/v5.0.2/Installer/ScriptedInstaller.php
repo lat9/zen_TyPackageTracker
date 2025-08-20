@@ -93,6 +93,12 @@ class ScriptedInstaller extends ScriptedInstallBase
             $this->updateFromNonEncapsulatedVersion();
         }
 
+        // -----
+        // Let the base plugin installer deal with any base Zen Cart changes needed for
+        // this plugin.
+        //
+        parent::executeInstall();
+
         return true;
     }
 
@@ -128,6 +134,12 @@ class ScriptedInstaller extends ScriptedInstallBase
                 );
             }
         }
+
+        // -----
+        // Let the base plugin upgrader deal with any changes needed for
+        // this plugin's sideboxes in the layout controller.
+        //
+        parent::executeUpgrade($oldVersion);
     }
 
     protected function executeUninstall()
@@ -137,6 +149,12 @@ class ScriptedInstaller extends ScriptedInstallBase
         ]);
 
         $this->deleteConfigurationGroup($this->configGroupTitle, true);
+
+        // -----
+        // Let the base plugin uninstaller deal with any changes needed for
+        // this plugin's sideboxes in the layout controller.
+        //
+        parent::executeUninstall();
     }
 
     protected function nonEncapsulatedVersionPresent(): bool

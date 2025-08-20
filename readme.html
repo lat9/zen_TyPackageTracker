@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
   <style>
+a:not(.nav-link) {
+    text-decoration: underline;
+}
 .nav-pills-custom .nav-link {
     color: #aaa;
     background: #fff;
@@ -201,8 +204,11 @@ body {
                         <h4 class="font-italic mb-4">Credits and History</h4>
                         <p>Based on Ty Package Tracker v2.3a by Ty Lieu (original author)</p>
                         <ul>
-                            <li>v5.0.2-beta1, 2025-08-17 (lat9, torvista):<ul>
+                            <li>v5.0.2-beta2, 2025-08-20 (lat9, torvista):<ul>
                                 <li>BUGFIX: Corrects configuration settings' sort-orders and adds Canada Post and Royal Mail on initial install.</li>
+                                <li>BUGFIX: Ensure that sidebox paths are correctly handled on an upgrade or uninstall.<ul>
+                                    <li>Note: Also requires core-file changes identified in <a href="https://github.com/zencart/zencart/pull/7191" target="_blank">this</a> Zen Cart 2.2.0+ GitHub PR.</li>
+                                </ul></li>
                             </ul></li>
                             <li>v5.0.1, 2025-04-13 (lat9, retched, piloujp):<ul>
                                 <li>BUGFIX: Corrects MySQL error when upgrading from previous version.</li>
