@@ -183,7 +183,7 @@ body {
                             <div class="card-header text-center bg-secondary text-white">Adding or Updating Carriers</div>
                             <div class="card-body">
                                 <p>To add new carriers, you will need the carrier-specific tracking link.  Navigate to the admin's <em>Configuration :: Ty Package Tracker</em> and, for each new carrier edit the <em>Carrier Name</em> and <em>Carrier Tracking Link</em>.  Once those values are supplied, set the carrier's <em>Status</em> to <code>True</code>.</p>
-                                <p>For example, if the URL for tracking is https://www.fedex.com/Tracking?action=track&amp;tracknumbers=1234567890, you'll omit the tracking number (1234567890) and enter the <em>Tracking Link</em> as <code>https://www.fedex.com/Tracking?action=track&amp;tracknumbers=</code>.</p>
+                                <p>For example, if the URL for tracking is https://www.fedex.com/fedextrack/summary?trknbr=1234567890, you'll omit the tracking number (1234567890) and enter the <em>Tracking Link</em> as <code>https://www.fedex.com/fedextrack/summary?trknbr=</code>.</p>
                             </div>
                         </div>
                         <div class="card mt-3">
@@ -209,6 +209,7 @@ body {
                                 <li>BUGFIX: Ensure that sidebox paths are correctly handled on an upgrade or uninstall.<ul>
                                     <li>Note: Also requires core-file changes identified in <a href="https://github.com/zencart/zencart/pull/7191" target="_blank">this</a> Zen Cart 2.2.0+ GitHub PR.</li>
                                 </ul></li>
+                                <li>BUGFIX: Fedex tracking URL changed; updates required to carrier links' configuration values and descriptions.</li>
                             </ul></li>
                             <li>v5.0.1, 2025-04-13 (lat9, retched, piloujp):<ul>
                                 <li>BUGFIX: Corrects MySQL error when upgrading from previous version.</li>
