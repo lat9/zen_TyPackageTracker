@@ -74,7 +74,7 @@ class zcObserverTyPackageTrackerAdmin extends base
             //         status-history record.
             //
             case 'ZEN_UPDATE_ORDERS_HISTORY_BEFORE_INSERT':
-                for ($i = 1; $i < 5; $i++) {
+                for ($i = 1; $i <= 5; $i++) {
                     $track_id_var = "track_id$i";
                     if (!empty($_POST[$track_id_var])) {
                         $p2[$track_id_var] = zen_db_input(str_replace(' ', '', zen_db_prepare_input($_POST[$track_id_var])));
