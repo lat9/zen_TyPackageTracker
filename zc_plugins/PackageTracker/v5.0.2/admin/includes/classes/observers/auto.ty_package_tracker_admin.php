@@ -3,7 +3,7 @@
 // Part of the Ty Package Tracker plugin, v5.0.0 and later.  Provides integration with the
 // admin's Customers :: Orders and Edit Orders display and update of an order's tracking information.
 //
-// Last updated: v5.0.0
+// Last updated: v5.0.2
 //
 if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG !== true) {
     die('Illegal Access');
