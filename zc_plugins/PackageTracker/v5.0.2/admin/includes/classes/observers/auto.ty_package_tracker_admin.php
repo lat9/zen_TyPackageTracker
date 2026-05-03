@@ -3,7 +3,7 @@
 // Part of the Ty Package Tracker plugin, v5.0.0 and later.  Provides integration with the
 // admin's Customers :: Orders and Edit Orders display and update of an order's tracking information.
 //
-// Last updated: v5.0.0
+// Last updated: v5.0.2
 //
 if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG !== true) {
     die('Illegal Access');
@@ -74,7 +74,7 @@ class zcObserverTyPackageTrackerAdmin extends base
             //         status-history record.
             //
             case 'ZEN_UPDATE_ORDERS_HISTORY_BEFORE_INSERT':
-                for ($i = 1; $i < 5; $i++) {
+                for ($i = 1; $i <= 5; $i++) {
                     $track_id_var = "track_id$i";
                     if (!empty($_POST[$track_id_var])) {
                         $p2[$track_id_var] = zen_db_input(str_replace(' ', '', zen_db_prepare_input($_POST[$track_id_var])));
