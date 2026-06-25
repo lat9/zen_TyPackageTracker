@@ -46,7 +46,7 @@ class zcObserverTyPackageTrackerAdmin extends base
                     if (empty($_POST[$track_id_var])) {
                         continue;
                     }
-                    $tracking_id = str_replace(' ', '', zen_db_prepare_input($_POST[$track_id_var]));
+                    $tracking_id = zen_output_string_protected(str_replace(' ', '', zen_db_prepare_input($_POST[$track_id_var])));
 
                     $carrier_name = constant("CARRIER_NAME_$i");
                     $carrier_link = constant("CARRIER_LINK_$i") . $tracking_id;
