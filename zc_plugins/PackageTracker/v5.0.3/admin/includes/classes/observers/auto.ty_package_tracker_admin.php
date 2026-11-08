@@ -3,7 +3,7 @@
 // Part of the Ty Package Tracker plugin, v5.0.0 and later.  Provides integration with the
 // admin's Customers :: Orders and Edit Orders display and update of an order's tracking information.
 //
-// Last updated: v5.0.2
+// Last updated: v5.0.3
 //
 if (!defined('IS_ADMIN_FLAG') || IS_ADMIN_FLAG !== true) {
     die('Illegal Access');
@@ -46,7 +46,7 @@ class zcObserverTyPackageTrackerAdmin extends base
                     if (empty($_POST[$track_id_var])) {
                         continue;
                     }
-                    $tracking_id = str_replace(' ', '', zen_db_prepare_input($_POST[$track_id_var]));
+                    $tracking_id = zen_output_string_protected(str_replace(' ', '', zen_db_prepare_input($_POST[$track_id_var])));
 
                     $carrier_name = constant("CARRIER_NAME_$i");
                     $carrier_link = constant("CARRIER_LINK_$i") . $tracking_id;
